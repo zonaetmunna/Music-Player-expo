@@ -1,18 +1,18 @@
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Ionicons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
-import React, { useCallback } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
+import { useCallback } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
 
 const PlayerVolumeBar = () => {
   const volume = usePlayerStore((s) => s.volume);
   const setVolume = usePlayerStore((s) => s.setVolume);
 
   const handleVolumeChange = useCallback(
-    (type: "increase" | "decrease") => {
+    (type: 'increase' | 'decrease') => {
       let newVolume = volume;
 
-      if (type === "increase") {
+      if (type === 'increase') {
         newVolume = Math.min(1, volume + 0.05);
       } else {
         newVolume = Math.max(0.0009, volume - 0.05);
@@ -20,13 +20,13 @@ const PlayerVolumeBar = () => {
 
       setVolume(newVolume);
     },
-    [volume, setVolume]
+    [volume, setVolume],
   );
 
   return (
     <View className="w-full mt-6 justify-center items-center">
       <View className="w-8/12 flex-row items-center space-x-2">
-        <TouchableOpacity onPress={() => handleVolumeChange("decrease")}>
+        <TouchableOpacity onPress={() => handleVolumeChange('decrease')}>
           <Ionicons name="volume-low" size={20} color="#fff" />
         </TouchableOpacity>
 
@@ -41,7 +41,7 @@ const PlayerVolumeBar = () => {
           thumbTintColor="#e17645"
         />
 
-        <TouchableOpacity onPress={() => handleVolumeChange("increase")}>
+        <TouchableOpacity onPress={() => handleVolumeChange('increase')}>
           <Ionicons name="volume-high" size={20} color="#fff" />
         </TouchableOpacity>
       </View>

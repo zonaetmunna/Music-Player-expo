@@ -1,9 +1,7 @@
-// tools/downloadManager.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
-
-const PERMISSIONS_KEY = "musicDirectoryUri";
+const PERMISSIONS_KEY = 'musicDirectoryUri';
 
 export async function getOrRequestDownloadFolderUri(): Promise<string | null> {
   // 1️⃣ Try to restore stored folder
@@ -23,11 +21,11 @@ export async function getOrRequestDownloadFolderUri(): Promise<string | null> {
 
 export async function downloadSongWithSAF(
   remoteUrl: string,
-  fileName: string
+  fileName: string,
 ): Promise<string | null> {
   const dirUri = await getOrRequestDownloadFolderUri();
   if (!dirUri) {
-    console.warn("User did not grant folder permission");
+    console.warn('User did not grant folder permission');
     return null;
   }
 
@@ -36,7 +34,7 @@ export async function downloadSongWithSAF(
     const tempFile = `${FileSystem.cacheDirectory}${fileName}`;
     const { uri: tempUri } = await FileSystem.downloadAsync(
       remoteUrl,
-      tempFile
+      tempFile,
     );
 
     // Step 2️⃣ Read as base64
@@ -48,7 +46,7 @@ export async function downloadSongWithSAF(
     const safFileUri = await FileSystem.StorageAccessFramework.createFileAsync(
       dirUri,
       fileName,
-      "audio/mpeg"
+      'audio/mpeg',
     );
 
     // Step 4️⃣ Write base64 data into that SAF file
@@ -57,16 +55,16 @@ export async function downloadSongWithSAF(
       base64,
       {
         encoding: FileSystem.EncodingType.Base64,
-      }
+      },
     );
 
     // Optional cleanup
     await FileSystem.deleteAsync(tempUri, { idempotent: true });
 
-    console.log("✅ Downloaded successfully to:", safFileUri);
+    console.log('✅ Downloaded successfully to:', safFileUri);
     return safFileUri;
   } catch (error) {
-    console.error("❌ Download failed:", error);
+    console.error('❌ Download failed:', error);
     return null;
   }
 }

@@ -1,25 +1,27 @@
-import LoadingScreen from "@/components/LoadingScreen";
-import { PlaylistTracksList } from "@/components/PlaylistTracksList";
-import { usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Playlist } from "@/types/types";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { toast } from "sonner-native";
+import { MaterialIcons } from '@expo/vector-icons';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { toast } from 'sonner-native';
+import LoadingScreen from '@/components/LoadingScreen';
+import { PlaylistTracksList } from '@/components/PlaylistTracksList';
+import { useColors } from '@/constants/tokens';
+import { usePlaylistStore } from '@/tools/store/usePlayerStore';
+import type { Playlist } from '@/types/types';
 
 const PlaylistScreen = () => {
   const { name: playlistId } = useLocalSearchParams<{ name: string }>();
   const getPlaylists = usePlaylistStore((s) => s.playlists);
   const getSpeceficSystemPlaylist = usePlaylistStore(
-    (s) => s.getSpeceficSystemPlaylist
+    (s) => s.getSpeceficSystemPlaylist,
   );
 
   const router = useRouter();
+  const colors = useColors();
 
   const [playlist, setPlaylist] = useState<Playlist | null | undefined>(
-    undefined
+    undefined,
   );
 
   // Always update playlist when playlists or route changes
@@ -27,12 +29,12 @@ const PlaylistScreen = () => {
     let mounted = true;
 
     const updatePlaylist = async () => {
-      if (playlistId === "most-played" || playlistId === "recent") {
+      if (playlistId === 'most-played' || playlistId === 'recent') {
         const p = await getSpeceficSystemPlaylist(playlistId);
         // console.log("p  ", p);
         if (p) {
           const firstCover = p.songs?.[0]?.coverArt;
-          p.coverArt = (firstCover ?? p.coverArt ?? "") as string;
+          p.coverArt = (firstCover ?? p.coverArt ?? '') as string;
         }
         if (mounted) setPlaylist(p ?? null);
       } else {
@@ -55,11 +57,15 @@ const PlaylistScreen = () => {
   if (!playlist) {
     console.warn(`Playlist ${playlistId} was not found!`);
     toast.warning(`Playlist ${playlistId} was not found!`);
-    return <Redirect href={"/(tabs)/playlists"} />;
+    return <Redirect href={'/(tabs)/playlists'} />;
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black px-1" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      className="px-1"
+      pointerEvents="box-none"
+    >
       <View
         className="flex-row items-center justify-between px-5 py-3 z-50"
         style={{ elevation: 10 }}

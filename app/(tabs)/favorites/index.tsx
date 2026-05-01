@@ -1,9 +1,10 @@
-import TracksList from "@/components/TracksList";
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Ionicons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import React from "react";
-import { Text, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { Text, View } from 'react-native';
+import TracksList from '@/components/TracksList';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
 
 const FavoritesScreen = () => {
   const files = usePlayerStore((s) => s.files);
@@ -15,27 +16,31 @@ const FavoritesScreen = () => {
   const favoriteSongs = files.filter((song) => favoriteIds.includes(song.id));
 
   const tabBarHeight = useBottomTabBarHeight();
+  const t = useT();
+  const colors = useColors();
 
   if (favoriteSongs.length === 0) {
     return (
       <View
-        style={{ paddingBottom: tabBarHeight }}
+        style={{
+          paddingBottom: tabBarHeight,
+          backgroundColor: colors.background,
+        }}
         className="flex-1 items-center justify-center bg-black px-6"
       >
         <Ionicons name="heart-outline" size={92} color="#666" />
         <Text className="text-neutral-400 text-xl font-semibold mt-4">
-          No favorites yet
+          {t('noFavoritesYet')}
         </Text>
         <Text className="text-neutral-500 text-base mt-2 text-center">
-          Tap the <Ionicons name="heart" size={14} color="red" /> on any track
-          to add it here.
+          {t('tapHeartToAdd')}
         </Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#000]">
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="pb-40 size-full">
         <TracksList
           tracks={favoriteSongs}

@@ -4,7 +4,7 @@ function formatDuration(duration: number) {
   const seconds = totalSeconds % 60;
 
   const formattedMinutes = String(minutes);
-  const formattedSeconds = String(seconds).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, '0');
 
   return `${formattedMinutes}:${formattedSeconds}`;
 }

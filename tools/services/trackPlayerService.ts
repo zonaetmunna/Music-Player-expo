@@ -1,7 +1,7 @@
 import TrackPlayer, {
   AppKilledPlaybackBehavior,
   Capability,
-} from "react-native-track-player";
+} from 'react-native-track-player';
 
 export async function setupPlayer() {
   await TrackPlayer.setupPlayer();

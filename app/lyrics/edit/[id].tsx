@@ -1,11 +1,8 @@
-import { AnimatedButton } from "@/components/AnimatedButton";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import * as Clipboard from "expo-clipboard";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import * as Clipboard from 'expo-clipboard';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -14,17 +11,24 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AnimatedButton } from '@/components/AnimatedButton';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 const EditLyricsScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const getSongInfo = usePlayerStore((s) => s.getSongInfo);
   const updateLyrics = usePlayerStore((s) => s.setLyrics);
+  const t = useT();
+  const colors = useColors();
 
   const [song, setSong] = useState<Song | null>(null);
-  const [lyrics, setLyrics] = useState("");
+  const [lyrics, setLyrics] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,8 +47,8 @@ const EditLyricsScreen = () => {
   };
 
   const handleSave = async () => {
-    if (!song) return;
-    await updateLyrics(song.id!, lyrics);
+    if (!song?.id) return;
+    await updateLyrics(song.id, lyrics);
     router.back();
   };
 
@@ -58,12 +62,16 @@ const EditLyricsScreen = () => {
   if (!song)
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-400 text-lg">Song not found</Text>
+        <Text className="text-gray-400 text-lg">{t('songNotFound')}</Text>
       </View>
     );
 
   return (
-    <SafeAreaView className="flex-1 bg-black b z-50" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      className="b z-50"
+      pointerEvents="box-none"
+    >
       {/* Header */}
       <View
         className="flex-row items-center justify-between px-5 pt-3"
@@ -72,7 +80,7 @@ const EditLyricsScreen = () => {
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-bold">Edit Lyrics</Text>
+        <Text className="text-white text-lg font-bold">{t('editLyrics')}</Text>
         <TouchableOpacity onPress={handleSave}>
           <FontAwesome6 name="check" size={26} color="#22c55e" />
         </TouchableOpacity>
@@ -106,10 +114,10 @@ const EditLyricsScreen = () => {
             </View>
           )}
           <Text className="text-white text-2xl font-bold mt-4">
-            {song.title || "Unknown Title"}
+            {song.title || t('unknownTitle')}
           </Text>
           <Text className="text-gray-400 text-base mt-1">
-            {song.artist || "Unknown Artist"}
+            {song.artist || t('unknownArtist')}
           </Text>
         </View>
 
@@ -124,7 +132,7 @@ const EditLyricsScreen = () => {
               multiline
               value={lyrics}
               onChangeText={setLyrics}
-              placeholder="Type or paste lyrics here..."
+              placeholder={t('typeOrPasteLyrics')}
               placeholderTextColor="#888"
               textAlignVertical="top"
               className="text-white text-base p-4 h-[300px]"
@@ -136,12 +144,12 @@ const EditLyricsScreen = () => {
         <View className="px-8 space-y-4 gap-y-4 mt-12">
           <AnimatedButton
             color="green"
-            label="💾 Save Lyrics"
+            label={`💾 ${t('saveLyrics')}`}
             onPress={handleSave}
           />
           <AnimatedButton
             color="cyan"
-            label="📋 Paste from Clipboard"
+            label={`📋 ${t('pasteFromClipboard')}`}
             onPress={handlePaste}
           />
         </View>

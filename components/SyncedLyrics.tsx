@@ -1,8 +1,8 @@
-import { parseLRC } from "@/tools/parseLyrics";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import React, { useEffect, useRef, useState } from "react";
-import { FlatList, Text, View } from "react-native";
-import { useProgress } from "react-native-track-player";
+import { useEffect, useRef, useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
+import { useProgress } from 'react-native-track-player';
+import { parseLRC } from '@/tools/parseLyrics';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
 
 export default function SyncedLyrics({
   lrc,
@@ -14,7 +14,7 @@ export default function SyncedLyrics({
   const lyrics = parseLRC(lrc);
   const synced = lyrics.some((l) => l.time > 0);
   const handleChangeSongPosition = usePlayerStore(
-    (s) => s.handleChangeSongPosition
+    (s) => s.handleChangeSongPosition,
   );
   const { position } = useProgress(100);
 
@@ -29,7 +29,7 @@ export default function SyncedLyrics({
     const index = lyrics.findIndex(
       (line, i) =>
         position >= line.time &&
-        (i === lyrics.length - 1 || position < lyrics[i + 1].time)
+        (i === lyrics.length - 1 || position < lyrics[i + 1].time),
     );
     if (index !== -1 && index !== activeIndex) setActiveIndex(index);
   }, [lyrics, position, synced]);
@@ -72,8 +72,8 @@ export default function SyncedLyrics({
             onLongPress={toggleShowLyrics}
             className={`text-center text-lg mx-4 ${
               synced && index === activeIndex
-                ? "text-white font-bold"
-                : "text-gray-400"
+                ? 'text-white font-bold'
+                : 'text-gray-400'
             }`}
             style={{ marginVertical: 6 }}
           >
@@ -84,7 +84,7 @@ export default function SyncedLyrics({
         contentContainerStyle={{
           paddingVertical: 100,
           flexGrow: 1,
-          justifyContent: "center",
+          justifyContent: 'center',
         }}
       />
     </View>

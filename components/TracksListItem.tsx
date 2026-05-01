@@ -1,9 +1,10 @@
-import { unknownTrackImageUri } from "@/constants/images";
-import { Song } from "@/types/types";
-import { Entypo } from "@expo/vector-icons";
-import React, { memo } from "react";
-import { Image, Text, TouchableHighlight, View } from "react-native";
-import TrackShortcutsMenu from "./TrackShortcutsMenu";
+import { Entypo } from '@expo/vector-icons';
+import { memo } from 'react';
+import { Image, Text, TouchableHighlight, View } from 'react-native';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import type { Song } from '@/types/types';
+import TrackShortcutsMenu from './TrackShortcutsMenu';
 
 export type TrackListItemProps = {
   handlePlaySong: (track: Song) => void | Promise<void>;
@@ -23,6 +24,7 @@ const TracksListItem = memo(
     isInPlaylist,
     playlistId,
   }: TrackListItemProps) => {
+    const t = useT();
     // const isActiveTrack = track?.index === currentSongIndex;
     return (
       <TouchableHighlight
@@ -38,7 +40,7 @@ const TracksListItem = memo(
                 uri: track.coverArt ?? unknownTrackImageUri,
               }}
               style={{ width: 50, height: 50 }}
-              className={`rounded-lg w-12 h-12 ${isActive ? "opacity-60" : "opacity-100"}`}
+              className={`rounded-lg w-12 h-12 ${isActive ? 'opacity-60' : 'opacity-100'}`}
             />
           </View>
 
@@ -46,16 +48,16 @@ const TracksListItem = memo(
             <View className="w-[95%]">
               <Text
                 numberOfLines={1}
-                className={`max-w-[90%] font-semibold text-base ${isActive ? "text-[#fc3c44]" : "text-white"}`}
+                className={`max-w-[90%] font-semibold text-base ${isActive ? 'text-[#fc3c44]' : 'text-white'}`}
               >
-                {track.title ? track.title : "Unknown Title"}
+                {track.title ? track.title : t('unknownTitle')}
               </Text>
               <View className="flex justify-between flex-row items-center">
                 <Text
                   numberOfLines={1}
                   className="text-[#9ca3af] text-sm mt-1 "
                 >
-                  {track.artist ? track.artist : "Unknown Artist"}
+                  {track.artist ? track.artist : t('unknownArtist')}
                 </Text>
               </View>
             </View>
@@ -77,9 +79,9 @@ const TracksListItem = memo(
         </View>
       </TouchableHighlight>
     );
-  }
+  },
 );
 
-TracksListItem.displayName = "TracksListItem";
+TracksListItem.displayName = 'TracksListItem';
 
 export default TracksListItem;

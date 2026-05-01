@@ -1,7 +1,7 @@
-import { Song } from "@/types/types";
-import { getSong } from "./db";
-import { fetchLyrics } from "./fetchLyrics";
-import { usePlayerStore } from "./store/usePlayerStore";
+import type { Song } from '@/types/types';
+import { getSong } from './db';
+import { fetchLyrics } from './fetchLyrics';
+import { usePlayerStore } from './store/usePlayerStore';
 
 export const handleFetchingLyrics = async ({
   currentSong,
@@ -15,7 +15,7 @@ export const handleFetchingLyrics = async ({
   }
   const lyrics = await fetchLyrics(currentSong, setLyrics);
   // router.reload();
-  const updated = await getSong(currentSong?.id || "");
+  const updated = await getSong(currentSong?.id || '');
   if (!updated) return;
 
   // Update the files array and the currentSong reference in the store in one atomic update

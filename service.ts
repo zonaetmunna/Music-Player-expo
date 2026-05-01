@@ -1,5 +1,5 @@
-import TrackPlayer, { Event, State } from "react-native-track-player";
-import { usePlayerStore } from "./tools/store/usePlayerStore";
+import TrackPlayer, { Event, State } from 'react-native-track-player';
+import { usePlayerStore } from './tools/store/usePlayerStore';
 
 export default async function playbackService() {
   TrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
@@ -13,7 +13,7 @@ export default async function playbackService() {
     Event.PlaybackProgressUpdated,
     ({ position, duration }) => {
       usePlayerStore.setState({ position, duration });
-    }
+    },
   );
 
   TrackPlayer.addEventListener(Event.RemoteSeek, async ({ position }) => {
@@ -32,11 +32,11 @@ export default async function playbackService() {
   });
 
   TrackPlayer.addEventListener(Event.RemoteNext, async () => {
-    usePlayerStore.getState().playAnotherSongInQueue("next");
+    usePlayerStore.getState().playAnotherSongInQueue('next');
   });
 
   TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
-    usePlayerStore.getState().playAnotherSongInQueue("previous");
+    usePlayerStore.getState().playAnotherSongInQueue('previous');
   });
 
   TrackPlayer.addEventListener(
@@ -59,9 +59,9 @@ export default async function playbackService() {
           await TrackPlayer.stop();
           await usePlayerStore
             .getState()
-            .playAnotherSongInQueue("next", "update");
+            .playAnotherSongInQueue('next', 'update');
         }
       }
-    }
+    },
   );
 }

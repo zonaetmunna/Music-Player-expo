@@ -1,8 +1,8 @@
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { syncFolder } from "@/tools/syncFolder";
-import { useEffect } from "react";
-import { AppState } from "react-native";
-import TrackPlayer from "react-native-track-player";
+import { useEffect } from 'react';
+import { AppState } from 'react-native';
+import TrackPlayer from 'react-native-track-player';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
+import { syncFolder } from '@/tools/syncFolder';
 
 export default function PlayerBinder() {
   const volume = usePlayerStore((s) => s.volume);
@@ -18,21 +18,21 @@ export default function PlayerBinder() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await syncFolder();
 
-        await loadPlaylists("all");
+        await loadPlaylists('all');
 
         // ✅ Auto-sync on app resume
         appStateSubscription = AppState.addEventListener(
-          "change",
+          'change',
           async (state) => {
-            if (state === "active") {
-              console.log("🔄 App resumed, syncing folder...");
+            if (state === 'active') {
+              console.log('🔄 App resumed, syncing folder...');
               await new Promise((resolve) => setTimeout(resolve, 1000));
               await syncFolder();
             }
-          }
+          },
         );
       } catch (err) {
-        console.error("❌ Error initializing player:", err);
+        console.error('❌ Error initializing player:', err);
       }
     };
 

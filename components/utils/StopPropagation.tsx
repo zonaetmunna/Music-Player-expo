@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from "react";
-import { View } from "react-native";
+import type { PropsWithChildren } from 'react';
+import { View } from 'react-native';
 
 const StopPropagation = ({ children }: PropsWithChildren) => {
   return (

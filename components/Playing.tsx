@@ -1,15 +1,18 @@
-import coverImage from "@/assets/placeholder2.jpg";
-import formatDuration from "@/tools/formatDuration";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import Slider from "@react-native-community/slider";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Image, Text, View } from "react-native";
-import TextTicker from "react-native-text-ticker";
-import NeumorphicButton from "./NeumorphicButton";
+import Slider from '@react-native-community/slider';
+import { useRouter } from 'expo-router';
+import { Image, Text, View } from 'react-native';
+import TextTicker from 'react-native-text-ticker';
+import coverImage from '@/assets/placeholder2.jpg';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import formatDuration from '@/tools/formatDuration';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import NeumorphicButton from './NeumorphicButton';
 
 const Playing = () => {
   const router = useRouter();
+  const t = useT();
+  const colors = useColors();
 
   const {
     currentSong,
@@ -28,7 +31,7 @@ const Playing = () => {
   // </SafeAreaView>
 
   return (
-    <View className="h-screen bg-black">
+    <View style={{ height: '100%', backgroundColor: colors.background }}>
       {/* Header */}
       <View className="flex-row justify-between items-center mx-4 mt-7">
         <NeumorphicButton
@@ -37,7 +40,7 @@ const Playing = () => {
           style="bg-gray-700 p-4"
         />
         <Text className="text-center text-white font-semibold text-sm uppercase">
-          Playing Now
+          {t('playingNow')}
         </Text>
         <NeumorphicButton
           icon="menu"
@@ -76,10 +79,10 @@ const Playing = () => {
             {currentSong.title}
           </TextTicker>
         ) : (
-          "Song Title"
+          t('unknownTitle')
         )}
         <Text className="text-center text-base text-gray-400 font-semibold mb-1">
-          {currentSong ? currentSong.artist : "Artist Name"}
+          {currentSong ? currentSong.artist : t('unknownArtist')}
         </Text>
       </View>
 
@@ -92,7 +95,7 @@ const Playing = () => {
       <View className="w-full flex justify-center text-center items-center mb-4 px-7">
         <View className="w-[95%]">
           <Slider
-            style={{ width: "100%", height: 40 }}
+            style={{ width: '100%', height: 40 }}
             minimumValue={0}
             maximumValue={duration}
             value={position}
@@ -112,7 +115,7 @@ const Playing = () => {
           style="bg-gray-700 p-4"
         />
         <NeumorphicButton
-          icon={isPlaying ? "pause" : "play"}
+          icon={isPlaying ? 'pause' : 'play'}
           onPress={playPauseMusic}
           style="bg-orange-800 p-4"
         />

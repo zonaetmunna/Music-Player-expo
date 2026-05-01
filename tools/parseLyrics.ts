@@ -2,7 +2,7 @@ export type LyricLine = { time: number; text: string };
 
 export function parseLRC(lrc: string): LyricLine[] {
   const lines = lrc
-    .split("\n")
+    .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
   const parsed: LyricLine[] = [];

@@ -1,7 +1,7 @@
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { FontAwesome6 } from "@expo/vector-icons";
-import React, { useEffect, useRef } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FontAwesome6 } from '@expo/vector-icons';
+import { useEffect, useRef } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
 
 type PlayerButtonsProps = {
   classNames?: string;
@@ -28,14 +28,14 @@ export const PlayPauseButton = ({
     <TouchableOpacity onPress={handlePlayPause} className={classNames}>
       <View className="flex-row justify-center items-center">
         <FontAwesome6
-          name={isPlaying ? "pause" : "play"}
+          name={isPlaying ? 'pause' : 'play'}
           size={iconSize}
           color="#fff"
-          style={{ width: iconSize, textAlign: "center" }}
+          style={{ width: iconSize, textAlign: 'center' }}
         />
         {text && (
           <Text className="text-white font-semibold text-lg text-center ml-2">
-            {isPlaying ? "Pause" : "Play"}
+            {isPlaying ? 'Pause' : 'Play'}
           </Text>
         )}
       </View>
@@ -48,10 +48,10 @@ export const SkipToLastButton = ({
   iconSize = 30,
 }: PlayerButtonsProps) => {
   const playAnotherSongInQueue = usePlayerStore(
-    (s) => s.playAnotherSongInQueue
+    (s) => s.playAnotherSongInQueue,
   );
   const handlebackwardPosition = usePlayerStore(
-    (s) => s.handlebackwardPosition
+    (s) => s.handlebackwardPosition,
   );
 
   const startRef = useRef<number | null>(null);
@@ -104,7 +104,7 @@ export const SkipToLastButton = ({
 
     // otherwise it's a tap (duration < threshold)
     if (duration < HOLD_THRESHOLD) {
-      playAnotherSongInQueue("previous");
+      playAnotherSongInQueue('previous');
     }
 
     startRef.current = null;
@@ -129,7 +129,7 @@ export const SkipToNextButton = ({
   iconSize = 30,
 }: PlayerButtonsProps) => {
   const playAnotherSongInQueue = usePlayerStore(
-    (s) => s.playAnotherSongInQueue
+    (s) => s.playAnotherSongInQueue,
   );
   const handleForwardPosition = usePlayerStore((s) => s.handleForwardPosition);
 
@@ -178,7 +178,7 @@ export const SkipToNextButton = ({
     }
 
     if (duration < HOLD_THRESHOLD) {
-      await playAnotherSongInQueue("next");
+      await playAnotherSongInQueue('next');
     }
 
     startRef.current = null;
@@ -210,7 +210,7 @@ export const ShuffleHandler = ({
         className="text-center"
         name="shuffle"
         size={iconSize}
-        color={shuffle ? "#fff" : "#666"}
+        color={shuffle ? '#fff' : '#666'}
       />
     </TouchableOpacity>
   );
@@ -229,16 +229,16 @@ export const RepeatHandler = ({ classNames, iconSize }: PlayerButtonsProps) => {
         className="text-center"
         name="repeat"
         size={iconSize}
-        color={repeat === "off" ? "#666" : "#fff"}
+        color={repeat === 'off' ? '#666' : '#fff'}
       />
-      {repeat === "one" && (
+      {repeat === 'one' && (
         <View
           className="absolute bg-white rounded-full items-center justify-center"
           style={{
             width: 14,
             height: 14,
-            top: "50%",
-            left: "50%",
+            top: '50%',
+            left: '50%',
             transform: [{ translateX: -7 }, { translateY: -7 }], // centers the circle
           }}
         >

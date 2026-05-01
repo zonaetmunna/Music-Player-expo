@@ -1,13 +1,15 @@
-import TracksList from "@/components/TracksList";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
-import { Animated, TextInput, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { useMemo, useState } from 'react';
+import { Animated, TextInput, TouchableOpacity, View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
-} from "react-native-safe-area-context";
+} from 'react-native-safe-area-context';
+import TracksList from '@/components/TracksList';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 interface Props {
   currentSong: Song | null;
@@ -16,16 +18,18 @@ interface Props {
 const MusicList = ({ currentSong }: Props) => {
   const files = usePlayerStore((s) => s.files);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const t = useT();
+  const colors = useColors();
 
   // Filtered tracks based on search
   const filteredTracks = useMemo(() => {
-    if (search.trim() === "") return files;
+    if (search.trim() === '') return files;
     const lowerSearch = search.toLowerCase();
     return files.filter(
       (t) =>
         t.title?.toLowerCase().includes(lowerSearch) ||
-        (t.artist && t.artist.toLowerCase().includes(lowerSearch))
+        t.artist?.toLowerCase().includes(lowerSearch),
     );
   }, [files, search]);
 
@@ -54,8 +58,11 @@ const MusicList = ({ currentSong }: Props) => {
 
   return (
     <SafeAreaView
-      className="flex-1 bg-black"
-      style={{ paddingBottom: insets.bottom + 30 }}
+      className="flex-1"
+      style={{
+        paddingBottom: insets.bottom + 30,
+        backgroundColor: colors.background,
+      }}
     >
       {/* Search Bar */}
       <Animated.View
@@ -65,7 +72,7 @@ const MusicList = ({ currentSong }: Props) => {
         <View className="flex-row items-center w-full bg-neutral-800 rounded-lg px-3">
           <TextInput
             className="text-white text-base flex-1 py-2"
-            placeholder="Find in songs"
+            placeholder={t('searchInSongs')}
             placeholderTextColor="#999"
             value={search}
             onChangeText={setSearch}
@@ -73,7 +80,7 @@ const MusicList = ({ currentSong }: Props) => {
           {search ? (
             <TouchableOpacity
               className="pl-2 py-2"
-              onPress={() => setSearch("")}
+              onPress={() => setSearch('')}
             >
               <Ionicons name="close" color="red" size={20} />
             </TouchableOpacity>

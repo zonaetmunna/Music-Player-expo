@@ -1,10 +1,11 @@
-import { unknownTrackImageUri } from "@/constants/images";
-import { Playlist } from "@/types/types";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Button, FlatList, Image, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { PlaylistListItem } from "./PlaylistListItem";
+import { useRouter } from 'expo-router';
+import { Button, FlatList, Image, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import { useColors } from '@/constants/tokens';
+import type { Playlist } from '@/types/types';
+import { PlaylistListItem } from './PlaylistListItem';
 
 const ItemDivider = () => (
   <View className="opacity-30 border-[#9ca3af88] border my-[5px] ml-[0px]" />
@@ -23,6 +24,8 @@ const PlaylistsList = ({
 }) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const t = useT();
+  const colors = useColors();
   return (
     <FlatList
       className="flex-1 size-full mt-14 overflow-y-scroll"
@@ -42,9 +45,9 @@ const PlaylistsList = ({
       ListHeaderComponent={
         <View className="flex mt-2 px-5 mb-4 bg-transparent border-white rounded-lg border-hairline">
           <Button
-            title="Create new Playlist"
-            color="black"
-            onPress={() => router.push("/playlists/create")}
+            title={t('createNewPlaylist')}
+            color={colors.text}
+            onPress={() => router.push('/playlists/create')}
           />
         </View>
       }
@@ -55,7 +58,7 @@ const PlaylistsList = ({
             className="size-[200px] self-center mt-10 opacity-30"
           />
           <Text className="text-center mt-5 text-white text-2xl">
-            No playlist found!
+            {t('noPlaylistFound')}
           </Text>
         </View>
       }

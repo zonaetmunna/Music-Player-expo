@@ -1,36 +1,37 @@
 // tools/syncFolder.ts
-import { Song } from "@/types/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
-import uuid from "react-native-uuid";
-import { toast } from "sonner-native";
-import { addSong, getAllSongs, removeSong } from "./db";
-import { displayNameFromSafUri, fileNameFromSafUri } from "./fileNameFromSAF";
-import { ensureCacheDir, looksLikeAudio } from "./fileUtils";
-import { readTagsForContentUri } from "./metadata";
-import { usePlayerStore } from "./store/usePlayerStore";
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
+import uuid from 'react-native-uuid';
+import { toast } from 'sonner-native';
+import type { Song } from '@/types/types';
+import { addSong, getAllSongs, removeSong } from './db';
+import { displayNameFromSafUri, fileNameFromSafUri } from './fileNameFromSAF';
+import { ensureCacheDir, looksLikeAudio } from './fileUtils';
+import { readTagsForContentUri } from './metadata';
+import { usePlayerStore } from './store/usePlayerStore';
 
 export async function syncFolder() {
   usePlayerStore.setState({ isLoading: true });
   try {
-    let directoryUri = await AsyncStorage.getItem("musicDirectoryUri");
+    let directoryUri = await AsyncStorage.getItem('musicDirectoryUri');
     if (!directoryUri) {
       const perm =
         await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
       if (!perm.granted || !perm.directoryUri) {
-        toast.error("Permition not granted!");
+        toast.error('Permition not granted!');
         usePlayerStore.setState({ isLoading: false });
         return null;
       }
       directoryUri = perm.directoryUri;
-      await AsyncStorage.setItem("musicDirectoryUri", directoryUri);
+      await AsyncStorage.setItem('musicDirectoryUri', directoryUri);
     }
 
     const entries =
       await FileSystem.StorageAccessFramework.readDirectoryAsync(directoryUri);
     const audioUris = entries.filter(looksLikeAudio);
     if (audioUris.length === 0) {
-      console.log("⚠️ No audio files found in folder");
+      console.log('⚠️ No audio files found in folder');
       return;
     }
 
@@ -39,16 +40,14 @@ export async function syncFolder() {
 
     // 🗩 NEW: detect removed songs
     const removedSongs = existingFiles.filter(
-      (s) => !audioUris.includes(s.uri)
+      (s) => !audioUris.includes(s.uri),
     );
     if (removedSongs.length > 0) {
-      console.log(
-        `🗑️ Found ${removedSongs.length} removed songs — deleting...`
-      );
+      console.log(`🗑️ Found ${removedSongs.length} removed songs — deleting...`);
       for (const song of removedSongs) {
         try {
           if (!song.id) {
-            console.warn("Skipping delete, missing id for:", song);
+            console.warn('Skipping delete, missing id for:', song);
           } else {
             await removeSong(song.id);
             console.log(`🗑️ Deleted: ${song.title ?? song.filename}`);
@@ -57,7 +56,7 @@ export async function syncFolder() {
             files: prev.files.filter((f) => f.uri !== song.uri),
           }));
         } catch (err) {
-          console.warn("Failed to delete song:", song.uri, err);
+          console.warn('Failed to delete song:', song.uri, err);
         }
       }
     }
@@ -65,19 +64,19 @@ export async function syncFolder() {
     // 🆕 Only process new songs
     const newUris = audioUris.filter((uri) => !existingUris.has(uri));
     if (newUris.length === 0) {
-      console.log("✅ No new songs to sync — folder is up to date");
+      console.log('✅ No new songs to sync — folder is up to date');
       return;
     }
 
     console.log(
-      `🎧 Found ${newUris.length} new songs — syncing full metadata...`
+      `🎧 Found ${newUris.length} new songs — syncing full metadata...`,
     );
 
     const cacheDir = await ensureCacheDir();
 
     // Create lightweight placeholders (same as pickFolder)
     const lightweightList: Song[] = newUris.map((uri, index) => {
-      const filename = uri.split("/").pop() ?? "Unknown.mp3";
+      const filename = uri.split('/').pop() ?? 'Unknown.mp3';
 
       return {
         id: uuid.v4().toString().slice(-8),
@@ -85,7 +84,7 @@ export async function syncFolder() {
         filename: fileNameFromSafUri(uri) ?? filename,
         title:
           displayNameFromSafUri(uri) ??
-          decodeURIComponent(filename.replace(/\.[^/.]+$/, "")),
+          decodeURIComponent(filename.replace(/\.[^/.]+$/, '')),
         artist: null,
         album: null,
         coverArt: null,
@@ -101,7 +100,7 @@ export async function syncFolder() {
 
     // Sort like in pickFolder
     const sortedList = lightweightList.sort(
-      (a, b) => (a?.date ?? 0) - (b?.date ?? 0)
+      (a, b) => (a?.date ?? 0) - (b?.date ?? 0),
     );
 
     // Merge with existing stored data (lyrics/syncedLyrics)
@@ -114,7 +113,7 @@ export async function syncFolder() {
       };
     });
 
-    const lastSong = await AsyncStorage.getItem("song");
+    const lastSong = await AsyncStorage.getItem('song');
     if (lastSong) {
       const lastSongObject: Song = JSON.parse(lastSong);
       usePlayerStore.setState({
@@ -143,14 +142,14 @@ export async function syncFolder() {
                   lyrics: f.lyrics ?? tags.lyrics ?? null,
                   syncedLyrics: f.syncedLyrics ?? tags.syncedLyrics ?? null,
                 }
-              : f
+              : f,
           ),
         }));
 
         await addSong(merged);
         fetched.add(song.uri);
       } catch (err) {
-        console.warn("Metadata parse failed:", err);
+        console.warn('Metadata parse failed:', err);
       } finally {
         inflight.delete(song.uri);
       }
@@ -174,7 +173,7 @@ export async function syncFolder() {
 
     console.log(`✅ Folder sync completed for ${mergedList.length} songs`);
   } catch (err) {
-    console.error("❌ Error syncing folder:", err);
+    console.error('❌ Error syncing folder:', err);
   } finally {
     const baseSongs = await getAllSongs();
     usePlayerStore.setState({ files: baseSongs });

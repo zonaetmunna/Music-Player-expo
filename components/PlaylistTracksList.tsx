@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useMemo, useState } from 'react';
 import {
   Alert,
   Image,
@@ -7,27 +9,25 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import { usePlaylistStore } from '@/tools/store/usePlayerStore';
+import type { Playlist } from '@/types/types';
+import QueueControls from './QueueControls';
+import TracksList from './TracksList';
 
-import { unknownTrackImageUri } from "@/constants/images";
-import { usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Playlist } from "@/types/types";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueueControls from "./QueueControls";
-import TracksList from "./TracksList";
-
-const systemPlaylists = ["downloads", "recent", "most-played", "favorites"];
+const systemPlaylists = ['downloads', 'recent', 'most-played', 'favorites'];
 
 export const PlaylistTracksList = ({
   playlist,
-  playlistName,
 }: {
   playlist: Playlist;
   playlistName: string;
 }) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const t = useT();
 
   const populatePlaylistSong = useMemo(() => {
     return playlist.songs ?? [];
@@ -40,13 +40,13 @@ export const PlaylistTracksList = ({
   // }
 
   const filteredPlaylistSongs = useMemo(() => {
-    if (search.trim() === "") return populatePlaylistSong;
+    if (search.trim() === '') return populatePlaylistSong;
     const lowerSearch = search.toLowerCase();
     return populatePlaylistSong.filter(
       (t) =>
         t?.title?.toLowerCase().includes(lowerSearch) ||
         t?.artist?.toLowerCase().includes(lowerSearch) ||
-        t?.album?.toLowerCase().includes(lowerSearch)
+        t?.album?.toLowerCase().includes(lowerSearch),
     );
   }, [populatePlaylistSong, search]);
 
@@ -57,21 +57,17 @@ export const PlaylistTracksList = ({
   const removePlaylist = usePlaylistStore((s) => s.removePlaylist);
 
   const handleDeletePlaylist = (playlistId: string) => {
-    Alert.alert(
-      "Delete Playlist",
-      "Are you sure you want to delete this playlist?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            removePlaylist(playlistId);
-            router.back();
-          },
+    Alert.alert(t('deletePlaylist'), t('deletePlaylistConfirm'), [
+      { text: t('cancel'), style: 'cancel' },
+      {
+        text: t('delete'),
+        style: 'destructive',
+        onPress: () => {
+          removePlaylist(playlistId);
+          router.back();
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (
@@ -90,7 +86,7 @@ export const PlaylistTracksList = ({
         <View className="flex-row items-center w-full bg-neutral-800 rounded-lg px-3">
           <TextInput
             className="text-white text-base flex-1 py-2"
-            placeholder="Search in Songs in this Playlist"
+            placeholder={t('searchInPlaylistSongs')}
             placeholderTextColor="#999"
             value={search}
             onChangeText={setSearch}
@@ -98,7 +94,7 @@ export const PlaylistTracksList = ({
           {search ? (
             <TouchableOpacity
               className="pl-2 py-2"
-              onPress={() => setSearch("")}
+              onPress={() => setSearch('')}
             >
               <Ionicons name="close" color="red" size={20} />
             </TouchableOpacity>
@@ -135,7 +131,7 @@ export const PlaylistTracksList = ({
               numberOfLines={1}
               className="text-sm mb-3 text-white font-bold text-center"
             >
-              {playlist.userName && "By"} {playlist.userName}
+              {playlist.userName && t('by')} {playlist.userName}
             </Text>
 
             {search.length === 0 && (
@@ -150,7 +146,7 @@ export const PlaylistTracksList = ({
                 >
                   <Ionicons name="warning-sharp" size={22} color="#fff" />
                   <Text className="text-white font-semibold text-lg text-center">
-                    Delete playlist
+                    {t('deletePlaylistLower')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -169,23 +165,23 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   artworkImageContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     height: 300,
     marginTop: 50,
   },
   artworkImage: {
-    width: "85%",
-    height: "100%",
-    resizeMode: "cover",
+    width: '85%',
+    height: '100%',
+    resizeMode: 'cover',
     borderRadius: 12,
   },
   playlistNameText: {
-    color: "#fff",
+    color: '#fff',
     marginTop: 22,
     marginBottom: 6,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: '800',
   },
 });

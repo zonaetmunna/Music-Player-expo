@@ -1,8 +1,8 @@
-import { Song } from "@/types/types";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -10,10 +10,10 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { MaterialIcons } from "@expo/vector-icons";
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 const PlayerFooter = ({ currentSong }: { currentSong: Song | null }) => {
   const router = useRouter();
@@ -23,7 +23,7 @@ const PlayerFooter = ({ currentSong }: { currentSong: Song | null }) => {
 
   const addToPlaylist = () => {
     router.push({
-      pathname: "/(modals)/addToPlaylist",
+      pathname: '/(modals)/addToPlaylist',
       params: { trackUri: currentSong?.uri },
     });
   };
@@ -42,20 +42,20 @@ const PlayerFooter = ({ currentSong }: { currentSong: Song | null }) => {
   const openArtistPage = () => {
     if (currentSong?.artist)
       router.replace({
-        pathname: "/(tabs)/artists/[name]",
+        pathname: '/(tabs)/artists/[name]',
         params: { name: currentSong.artist },
       });
   };
 
   const buttonData = [
     {
-      icon: "playlist-add",
-      label: "Playlist",
+      icon: 'playlist-add',
+      label: 'Playlist',
       onPress: addToPlaylist,
     },
     {
-      icon: "lyrics",
-      label: "Lyrics",
+      icon: 'lyrics',
+      label: 'Lyrics',
       onPress: openLyrics,
       isActive: showLyrics,
     },
@@ -65,8 +65,8 @@ const PlayerFooter = ({ currentSong }: { currentSong: Song | null }) => {
     //   onPress: openComments,
     // },
     {
-      icon: "person-4",
-      label: "Artist",
+      icon: 'person-4',
+      label: 'Artist',
       onPress: openArtistPage,
     },
   ];
@@ -78,14 +78,14 @@ const PlayerFooter = ({ currentSong }: { currentSong: Song | null }) => {
     >
       {/* Neon gradient background */}
       <LinearGradient
-        colors={["#0f0f0f", "#1a1a1a", "#0a0a0a"]}
+        colors={['#0f0f0f', '#1a1a1a', '#0a0a0a']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradientBackground}
       >
         <View className="flex-row justify-around items-center">
-          {buttonData.map((btn, idx) => (
-            <AnimatedButton key={idx} {...btn} />
+          {buttonData.map((btn) => (
+            <AnimatedButton key={btn.icon} {...btn} />
           ))}
         </View>
       </LinearGradient>
@@ -136,7 +136,7 @@ const AnimatedButton = ({
         style={[
           animatedStyle,
           {
-            shadowColor: "#00FFFF",
+            shadowColor: '#00FFFF',
           },
         ]}
       >
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 2,
     borderWidth: 1,
-    borderColor: "#2b2b2b",
-    shadowColor: "#00FFFF",
+    borderColor: '#2b2b2b',
+    shadowColor: '#00FFFF',
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },

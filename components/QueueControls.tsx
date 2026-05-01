@@ -1,9 +1,8 @@
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { FontAwesome6, Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import TrackPlayer from "react-native-track-player";
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { Text, TouchableOpacity, View } from 'react-native';
+import TrackPlayer from 'react-native-track-player';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 const QueueControls = ({ tracks }: { tracks: Song[] }) => {
   const clearQueue = usePlayerStore((s) => s.clearQueue);
@@ -32,7 +31,7 @@ const QueueControls = ({ tracks }: { tracks: Song[] }) => {
         <TouchableOpacity onPress={handlePlay}>
           <View
             className={
-              "p-3 bg-[rgba(47,47,47,0.5)] rounded-lg flex-row justify-center items-center gap-x-2 w-full"
+              'p-3 bg-[rgba(47,47,47,0.5)] rounded-lg flex-row justify-center items-center gap-x-2 w-full'
             }
           >
             <FontAwesome6 name="play" size={24} color="#fff" />

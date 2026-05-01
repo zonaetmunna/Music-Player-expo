@@ -9,6 +9,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "biome:check": "biome check .",
+    "biome:write": "biome check --write .",
     "codegen": "react-native codegen"
   },
   "dependencies": {
@@ -46,7 +48,7 @@
     "jsmediatags": "^3.9.7",
     "music-metadata-browser": "^2.5.11",
     "nativewind": "^4.1.23",
-    "prettier-plugin-tailwindcss": "^0.5.14",
+
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.6",
@@ -69,12 +71,11 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
     "@babel/core": "^7.25.2",
     "@react-native-community/cli": "latest",
     "@types/jsmediatags": "^3.9.6",
     "@types/react": "~19.0.10",
-    "eslint": "^9.25.0",
-    "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
   "private": true

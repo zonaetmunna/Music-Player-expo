@@ -1,13 +1,13 @@
-import { unknownTrackImageUri } from "@/constants/images";
-import { Playlist } from "@/types/types";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign } from '@expo/vector-icons';
 import {
   Image,
   Text,
   TouchableHighlight,
-  TouchableHighlightProps,
+  type TouchableHighlightProps,
   View,
-} from "react-native";
+} from 'react-native';
+import { unknownTrackImageUri } from '@/constants/images';
+import type { Playlist } from '@/types/types';
 
 type PlaylistListItemProps = {
   playlist: Playlist;
@@ -20,7 +20,7 @@ export const PlaylistListItem = ({
   const songCount = playlist.songs?.length ?? 0;
   const duration = playlist.duration
     ? `${Math.floor(playlist.duration / 60)} min`
-    : "0 min";
+    : '0 min';
 
   return (
     <TouchableHighlight activeOpacity={0.8} {...props}>
@@ -53,9 +53,9 @@ export const PlaylistListItem = ({
             ) : null}
 
             {/* Duration + Song count */}
-            {!["downloads", "recent", "most-played"].includes(playlist.id) && (
+            {!['downloads', 'recent', 'most-played'].includes(playlist.id) && (
               <Text className="text-gray-500 text-xs mt-0.5">
-                {songCount} song{songCount !== 1 ? "s" : ""} • {duration}
+                {songCount} song{songCount !== 1 ? 's' : ''} • {duration}
               </Text>
             )}
           </View>
@@ -63,7 +63,7 @@ export const PlaylistListItem = ({
             <AntDesign
               name="right"
               size={16}
-              color={"#fff"}
+              color={'#fff'}
               style={{ opacity: 0.5 }}
             />
           </View>

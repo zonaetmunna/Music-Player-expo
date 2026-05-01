@@ -1,10 +1,12 @@
 import LoadingScreen from "@/components/LoadingScreen";
 import { unknownTrackImageUri } from "@/constants/images";
+import { useColors } from "@/constants/tokens";
+import { useT } from "@/constants/i18n";
 import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Artist, Song } from "@/types/types";
+import type { Artist, Song } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -67,6 +69,8 @@ const ArtistsScreen = () => {
   const uniqueArtists: Artist[] = processMusicData(files);
 
   const [search, setSearch] = useState("");
+  const t = useT();
+  const colors = useColors();
 
   const filteredArtists = useMemo(() => {
     if (search.trim() === "") return uniqueArtists;
@@ -79,12 +83,12 @@ const ArtistsScreen = () => {
   if (isLoading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#000]">
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="absolute left-0 right-0 bg-neutral-900 px-4 pb-2 z-10">
         <View className="flex-row items-center w-full bg-neutral-800 rounded-lg px-3">
           <TextInput
             className="text-white text-base flex-1 py-2"
-            placeholder="Search in Artists"
+            placeholder={t("searchInArtists")}
             placeholderTextColor="#999"
             value={search}
             onChangeText={setSearch}
@@ -113,7 +117,7 @@ const ArtistsScreen = () => {
           contentContainerStyle={{ paddingTop: 15, paddingBottom: 140 }}
           ListEmptyComponent={
             <View>
-              <Text>No Artist Found!</Text>
+              <Text style={{ color: colors.text }}>{t("noArtistFound")}</Text>
             </View>
           }
           renderItem={({ item: artist }) => {
@@ -144,7 +148,7 @@ const ArtistsScreen = () => {
                           numberOfLines={1}
                           className="text-white text-base"
                         >
-                          {artist.songs.length} songs
+                          {artist.songs.length} {t("songsCountSuffix")}
                         </Text>
                       </View>
                     </View>

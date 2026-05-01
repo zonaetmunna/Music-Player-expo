@@ -1,8 +1,6 @@
-import { fetchLyrics } from "@/tools/fetchLyrics";
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { useRouter } from "expo-router";
-import React, { PropsWithChildren, useState } from "react";
+import { useRouter } from 'expo-router';
+import type { PropsWithChildren } from 'react';
+import { useState } from 'react';
 import {
   ActionSheetIOS,
   Modal,
@@ -11,8 +9,12 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { toast } from "sonner-native";
+} from 'react-native';
+import { toast } from 'sonner-native';
+import { useT } from '@/constants/i18n';
+import { fetchLyrics } from '@/tools/fetchLyrics';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 type TrackShortcutsMenuProps = PropsWithChildren<{
   track: Song;
@@ -29,23 +31,24 @@ const TrackShortcutsMenu = ({
   const router = useRouter();
   const toggleFavorite = usePlaylistStore((s) => s.toggleFavorite);
   const removeTrackFromPlaylist = usePlaylistStore(
-    (s) => s.removeTrackFromPlaylist
+    (s) => s.removeTrackFromPlaylist,
   );
   const isFavorite = usePlaylistStore((s) => s.isFavorite(track.uri));
 
   const setLyrics = usePlayerStore((s) => s.setLyrics);
+  const t = useT();
 
   const [visible, setVisible] = useState(false);
 
   const doToggleFavorite = () => {
-    toggleFavorite(track.id || "");
+    toggleFavorite(track.id || '');
     setVisible(false);
   };
 
   const doAddToPlaylist = () => {
     setVisible(false);
     router.push({
-      pathname: "/(modals)/addToPlaylist",
+      pathname: '/(modals)/addToPlaylist',
       params: { trackUri: track.uri },
     });
   };
@@ -57,43 +60,43 @@ const TrackShortcutsMenu = ({
 
   const removeFromPlaylist = () => {
     if (!playlistId) return;
-    removeTrackFromPlaylist(playlistId, track.id || "");
+    removeTrackFromPlaylist(playlistId, track.id || '');
   };
 
   const goToAlbum = () => {
     if (!track.album) {
-      toast.error("Sorry! There is no Album");
+      toast.error(t('noAlbumError'));
       return;
     }
     setVisible(false);
     router.navigate({
-      pathname: "/album/[name]",
-      params: { name: track.album.replaceAll(" ", "+") },
+      pathname: '/album/[name]',
+      params: { name: track.album.replaceAll(' ', '+') },
     });
   };
 
   const goToArtist = () => {
     if (!track.artist) {
-      toast.error("Sorry! There is no Artist name");
+      toast.error(t('noArtistError'));
       return;
     }
     setVisible(false);
     router.navigate({
-      pathname: "/(tabs)/artists/[name]",
+      pathname: '/(tabs)/artists/[name]',
       params: { name: track.artist },
     });
   };
 
   const openMenu = () => {
-    if (Platform.OS === "ios") {
+    if (Platform.OS === 'ios') {
       const favoriteLabel = isFavorite
-        ? "Remove from Favorites"
-        : "Add to Favorites";
-      const options = [favoriteLabel, "Add to playlist", "Cancel"];
+        ? t('removeFromFavorites')
+        : t('addToFavorites');
+      const options = [favoriteLabel, t('addToPlaylist'), t('cancel')];
       const cancelButtonIndex = 2;
       ActionSheetIOS.showActionSheetWithOptions(
         { options, cancelButtonIndex },
-        handleActionIndex
+        handleActionIndex,
       );
     } else {
       setVisible(true);
@@ -117,20 +120,24 @@ const TrackShortcutsMenu = ({
         >
           <View
             className="bg-[#1c1c1e] rounded-t-2xl shadow-lg justify-end"
-            style={{ justifyContent: "flex-end", paddingBottom: 20 }}
+            style={{ justifyContent: 'flex-end', paddingBottom: 20 }}
           >
             <TouchableOpacity
               className="px-5 py-4 border-b border-white/10"
               onPress={() => fetchLyrics(track, setLyrics)}
             >
-              <Text className="text-base text-gray-100">⬇ Fetch Lyrics</Text>
+              <Text className="text-base text-gray-100">
+                ⬇ {t('fetchLyrics')}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               className="px-5 py-4 border-b border-white/10"
               onPress={goToArtist}
             >
-              <Text className="text-base text-gray-100">🎙 Show Artist</Text>
+              <Text className="text-base text-gray-100">
+                🎙 {t('showArtist')}
+              </Text>
             </TouchableOpacity>
 
             {track.album && (
@@ -138,7 +145,9 @@ const TrackShortcutsMenu = ({
                 className="px-5 py-4 border-b border-white/10"
                 onPress={goToAlbum}
               >
-                <Text className="text-base text-gray-100">🎶 Show Album</Text>
+                <Text className="text-base text-gray-100">
+                  🎶 {t('showAlbum')}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -147,7 +156,7 @@ const TrackShortcutsMenu = ({
               onPress={doAddToPlaylist}
             >
               <Text className="text-base text-gray-100">
-                ➕ Add to Playlist
+                ➕ {t('addToPlaylist')}
               </Text>
             </TouchableOpacity>
 
@@ -157,7 +166,7 @@ const TrackShortcutsMenu = ({
                 onPress={removeFromPlaylist}
               >
                 <Text className="text-base text-gray-100">
-                  ❌ Remove from Playlist
+                  ❌ {t('removeFromPlaylist')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -167,7 +176,9 @@ const TrackShortcutsMenu = ({
               onPress={doToggleFavorite}
             >
               <Text className="text-base text-gray-100">
-                {isFavorite ? "★ Remove from Favorites" : "☆ Add to Favorites"}
+                {isFavorite
+                  ? `★ ${t('removeFromFavorites')}`
+                  : `☆ ${t('addToFavorites')}`}
               </Text>
             </TouchableOpacity>
 
@@ -176,7 +187,7 @@ const TrackShortcutsMenu = ({
               onPress={() => setVisible(false)}
             >
               <Text className="text-base text-red-500 font-semibold text-center">
-                Cancel
+                {t('cancel')}
               </Text>
             </TouchableOpacity>
           </View>

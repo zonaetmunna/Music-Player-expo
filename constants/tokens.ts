@@ -1,4 +1,5 @@
-import { useColorScheme } from "react-native";
+import { useColorScheme } from 'react-native';
+import { useSettingsStore } from '@/tools/store/useSettingsStore';
 
 interface ColorPalette {
   primary: string;
@@ -13,34 +14,36 @@ interface ColorPalette {
 }
 
 export function useColors(): ColorPalette {
-  const colorScheme = useColorScheme(); // 'light' or 'dark'
+  const systemColorScheme = useColorScheme();
+  const themeMode = useSettingsStore((s) => s.themeMode);
+  const colorScheme = themeMode === 'system' ? systemColorScheme : themeMode;
 
   // Define the colors based on the color scheme
   const lightColors: ColorPalette = {
-    primary: "#2563eb",
-    secondary: "#3b82f6",
-    background: "#f9fafb",
-    foreground: "#1f2937",
-    text: "#000",
-    icon: "#000",
-    textMuted: "#6b7280",
-    maximumTrackTintColor: "rgba(0,0,0,0.3)",
-    minimumTrackTintColor: "rgba(0,0,0,0.5)",
+    primary: '#2563eb',
+    secondary: '#3b82f6',
+    background: '#f9fafb',
+    foreground: '#1f2937',
+    text: '#000',
+    icon: '#000',
+    textMuted: '#6b7280',
+    maximumTrackTintColor: 'rgba(0,0,0,0.3)',
+    minimumTrackTintColor: 'rgba(0,0,0,0.5)',
   };
 
   const darkColors: ColorPalette = {
-    primary: "#fc3c44",
-    secondary: "#f472b6",
-    background: "#000",
-    foreground: "#fff",
-    text: "#fff",
-    icon: "#fff",
-    textMuted: "#9ca3af",
-    maximumTrackTintColor: "rgba(255,255,255,0.4)",
-    minimumTrackTintColor: "rgba(255,255,255,0.6)",
+    primary: '#fc3c44',
+    secondary: '#f472b6',
+    background: '#000',
+    foreground: '#fff',
+    text: '#fff',
+    icon: '#fff',
+    textMuted: '#9ca3af',
+    maximumTrackTintColor: 'rgba(255,255,255,0.4)',
+    minimumTrackTintColor: 'rgba(255,255,255,0.6)',
   };
 
-  return colorScheme === "dark" ? darkColors : lightColors;
+  return colorScheme === 'dark' ? darkColors : lightColors;
 }
 
 export const fontSize = {

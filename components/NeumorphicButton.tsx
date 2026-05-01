@@ -1,6 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { GestureResponderEvent, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import {
+  type GestureResponderEvent,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 interface Props {
   icon: keyof typeof Ionicons.glyphMap;
@@ -11,7 +14,7 @@ interface Props {
 const NeumorphicButton = ({
   icon,
   onPress,
-  style = "p-6 bg-gray-600",
+  style = 'p-6 bg-gray-600',
 }: Props) => {
   return (
     <TouchableOpacity

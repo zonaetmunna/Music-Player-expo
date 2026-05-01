@@ -1,6 +1,6 @@
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from 'expo-file-system';
 
-export const AUDIO_EXT = [".mp3"];
+export const AUDIO_EXT = ['.mp3'];
 
 export function looksLikeAudio(uri: string) {
   const lower = uri.toLowerCase();
@@ -14,7 +14,7 @@ export function getFilenameFromAnyUri(uri: string): string {
   return `track.mp3`;
 }
 
-export async function ensureCacheDir(sub = "music-scan"): Promise<string> {
+export async function ensureCacheDir(sub = 'music-scan'): Promise<string> {
   const dir = `${FileSystem.cacheDirectory}${sub}/`;
   const info = await FileSystem.getInfoAsync(dir);
   if (!info.exists)
@@ -25,7 +25,7 @@ export async function ensureCacheDir(sub = "music-scan"): Promise<string> {
 export async function copyContentToCache(
   contentUri: string,
   cacheDir: string,
-  preferredName?: string
+  preferredName?: string,
 ): Promise<string> {
   const filename = preferredName ?? getFilenameFromAnyUri(contentUri);
   const dest = `${cacheDir}${filename}`;

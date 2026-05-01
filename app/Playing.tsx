@@ -1,21 +1,7 @@
-import coverImage from "@/assets/placeholder2.jpg";
-import DismissPlayerSymbol from "@/components/DismissPlayerSymbol";
-import {
-  PlayPauseButton,
-  RepeatHandler,
-  ShuffleHandler,
-  SkipToLastButton,
-  SkipToNextButton,
-} from "@/components/PlayerControls";
-import PlayerVolumeBar from "@/components/PlayerVolumeBar";
-import ProgressBar from "@/components/ProgressBar";
-import SyncedLyrics from "@/components/SyncedLyrics";
-import { handleFetchingLyrics } from "@/tools/handleFetchingLyrics";
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { Link, useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -24,19 +10,34 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Modal from "react-native-modal";
+} from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Modal from 'react-native-modal';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
-import TextTicker from "react-native-text-ticker";
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import TextTicker from 'react-native-text-ticker';
+import coverImage from '@/assets/placeholder2.jpg';
+import DismissPlayerSymbol from '@/components/DismissPlayerSymbol';
+import {
+  PlayPauseButton,
+  RepeatHandler,
+  ShuffleHandler,
+  SkipToLastButton,
+  SkipToNextButton,
+} from '@/components/PlayerControls';
+import PlayerVolumeBar from '@/components/PlayerVolumeBar';
+import ProgressBar from '@/components/ProgressBar';
+import SyncedLyrics from '@/components/SyncedLyrics';
+import { useT } from '@/constants/i18n';
+import { handleFetchingLyrics } from '@/tools/handleFetchingLyrics';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const IMAGE_SIZE = SCREEN_HEIGHT * 0.4;
 
 export default function PlayingScreen() {
@@ -44,6 +45,7 @@ export default function PlayingScreen() {
   const translateY = useSharedValue(0);
 
   const queue = usePlayerStore((s) => s.queue);
+  const t = useT();
 
   const toggleFavorite = usePlaylistStore((s) => s.toggleFavorite);
 
@@ -58,20 +60,20 @@ export default function PlayingScreen() {
 
   const addToPlaylist = () => {
     router.push({
-      pathname: "/(modals)/addToPlaylist",
+      pathname: '/(modals)/addToPlaylist',
       params: { trackUri: currentSong?.uri },
     });
   };
 
   const handleDownload = async (id: string, remoteUrl: string) => {
     if (!id || !remoteUrl) {
-      console.warn("Not enought details to download the song!");
+      console.warn('Not enought details to download the song!');
     }
     await downloadFile(id, remoteUrl);
   };
 
   const isFavorite = usePlaylistStore((s) =>
-    s.isFavorite(currentSong?.id || "")
+    s.isFavorite(currentSong?.id || ''),
   );
 
   // Pan gesture
@@ -117,23 +119,23 @@ export default function PlayingScreen() {
   const handleOption = (action: string) => {
     closeOptions();
     switch (action) {
-      case "toggleLyrics":
+      case 'toggleLyrics':
         setOptionsVisible(false);
         toggleShowLyrics();
         break;
-      case "showInfo":
+      case 'showInfo':
         setOptionsVisible(false);
         router.navigate({
-          pathname: "/info/[id]",
-          params: { id: currentSong?.id ?? "" },
+          pathname: '/info/[id]',
+          params: { id: currentSong?.id ?? '' },
         });
         break;
-      case "showAlbum":
+      case 'showAlbum':
         setOptionsVisible(false);
         router.navigate({
-          pathname: "/album/[name]",
+          pathname: '/album/[name]',
           params: {
-            name: currentSong?.album?.replaceAll(" ", "+") || "Unknown+Album",
+            name: currentSong?.album?.replaceAll(' ', '+') || 'Unknown+Album',
           },
         });
         break;
@@ -148,7 +150,7 @@ export default function PlayingScreen() {
           style={[
             {
               flex: 1,
-              backgroundColor: "rgba(0,0,0,1)",
+              backgroundColor: 'rgba(0,0,0,1)',
             },
             backgroundStyle,
           ]}
@@ -161,10 +163,10 @@ export default function PlayingScreen() {
           style={[
             {
               flex: 1,
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: 'rgba(0,0,0,0.5)',
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              overflow: "hidden",
+              overflow: 'hidden',
             },
             cardStyle,
           ]}
@@ -186,11 +188,11 @@ export default function PlayingScreen() {
           {/* </View> */}
           <DismissPlayerSymbol />
           {/* Your player content goes here */}
-          <View className="mt-20" style={{ height: "100%" }}>
+          <View className="mt-20" style={{ height: '100%' }}>
             <View
               className={` relative items-start rounded-lg border-2 border-[#2a2d2fcd] shadow-inner shadow-gray-700 mx-auto`}
               style={{
-                width: "90%",
+                width: '90%',
                 height: IMAGE_SIZE,
                 flex: 4,
               }}
@@ -210,10 +212,10 @@ export default function PlayingScreen() {
                   width={IMAGE_SIZE}
                   height={IMAGE_SIZE}
                   style={{
-                    alignSelf: "center",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "fill",
+                    alignSelf: 'center',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'fill',
                   }}
                 />
               </TouchableOpacity>
@@ -229,7 +231,7 @@ export default function PlayingScreen() {
                       lrc={
                         currentSong?.syncedLyrics
                           ? currentSong.syncedLyrics
-                          : currentSong?.lyrics || ""
+                          : currentSong?.lyrics || ''
                       }
                     />
                   </View>
@@ -239,7 +241,7 @@ export default function PlayingScreen() {
                     className="absolute inset-0 z-50 bg-black/50 flex items-center justify-center size-full"
                   >
                     <Text className="text-white text-2xl">
-                      No Lyrics Yet :(
+                      {t('noLyricsYet')}
                     </Text>
                     <View className="flex flex-row gap-x-3">
                       <TouchableOpacity
@@ -255,8 +257,8 @@ export default function PlayingScreen() {
                       <TouchableOpacity
                         onPress={() =>
                           router.navigate({
-                            pathname: "/lyrics/edit/[id]",
-                            params: { id: currentSong?.id || "" },
+                            pathname: '/lyrics/edit/[id]',
+                            params: { id: currentSong?.id || '' },
                           })
                         }
                         activeOpacity={0.8}
@@ -282,12 +284,12 @@ export default function PlayingScreen() {
               {/* Song Info */}
               <View className="mb-4 mt-4 flex flex-row justify-center items-center z-50 w-full relative">
                 <TouchableOpacity
-                  onPress={() => toggleFavorite(currentSong?.id || "")}
+                  onPress={() => toggleFavorite(currentSong?.id || '')}
                   className="text-white size-12 items-center flex justify-center absolute left-4"
                 >
                   <FontAwesome
                     color="red"
-                    name={isFavorite ? "heart" : "heart-o"}
+                    name={isFavorite ? 'heart' : 'heart-o'}
                     size={24}
                   />
                 </TouchableOpacity>
@@ -305,16 +307,16 @@ export default function PlayingScreen() {
                       {currentSong.title}
                     </TextTicker>
                   ) : (
-                    "Song Title"
+                    'Song Title'
                   )}
                   <Link
                     href={{
-                      pathname: "/(tabs)/artists/[name]",
+                      pathname: '/(tabs)/artists/[name]',
                       params: {
                         name: currentSong
-                          ? currentSong.artist?.replaceAll(" ", "+") ||
-                            "Artist+Name"
-                          : "Artist+Name",
+                          ? currentSong.artist?.replaceAll(' ', '+') ||
+                            'Artist+Name'
+                          : 'Artist+Name',
                       },
                     }}
                     replace={true}
@@ -330,7 +332,7 @@ export default function PlayingScreen() {
                       className="text-center text-base text-gray-400 font-semibold mb-1"
                       marqueeDelay={2000}
                     >
-                      {currentSong ? currentSong.artist : "Artist Name"}
+                      {currentSong ? currentSong.artist : t('unknownArtist')}
                     </TextTicker>
                   </Link>
                 </View>
@@ -344,7 +346,7 @@ export default function PlayingScreen() {
               </View>
               <View className="flex justify-between w-full flex-row px-5">
                 <TouchableOpacity
-                  onPress={() => router.push("/Queue")}
+                  onPress={() => router.push('/Queue')}
                   className="size-12 items-center flex justify-center text-[#b8b8b8]"
                 >
                   <FontAwesome name="list-ol" color="#b8b8b8" size={24} />
@@ -353,8 +355,8 @@ export default function PlayingScreen() {
                 <TouchableOpacity
                   onPress={() =>
                     router.push({
-                      pathname: "/info/[id]",
-                      params: { id: currentSong?.id ?? "" },
+                      pathname: '/info/[id]',
+                      params: { id: currentSong?.id ?? '' },
                     })
                   }
                   className="text-white size-12 items-center flex justify-center"
@@ -365,8 +367,8 @@ export default function PlayingScreen() {
                 <TouchableOpacity
                   onPress={() =>
                     handleDownload(
-                      currentSong?.id || "",
-                      currentSong?.uri || ""
+                      currentSong?.id || '',
+                      currentSong?.uri || '',
                     )
                   }
                   className="text-white size-12 items-center flex justify-center"
@@ -388,7 +390,7 @@ export default function PlayingScreen() {
                   // backgroundColor: "rgba(0,0,0,0.25)",
                   borderRadius: 60,
                   marginTop: 10,
-                  shadowColor: "#000",
+                  shadowColor: '#000',
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 16,
@@ -428,17 +430,17 @@ export default function PlayingScreen() {
             isVisible={isOptionsVisible}
             onBackdropPress={closeOptions}
             backdropOpacity={0.6}
-            style={{ justifyContent: "flex-end", margin: 0 }}
+            style={{ justifyContent: 'flex-end', margin: 0 }}
           >
             <View className="bg-[#1a1a1a] rounded-t-3xl p-5 pb-8 border-t border-gray-700">
               <Text className="text-white text-lg font-bold mb-4 text-center">
-                Song Options
+                {t('songOptions')}
               </Text>
 
               {[
-                { label: "Show/Hide Lyrics", action: "toggleLyrics" },
-                { label: "Show Song Info", action: "showInfo" },
-                { label: "Show Album", action: "showAlbum" },
+                { label: t('showHideLyrics'), action: 'toggleLyrics' },
+                { label: t('showSongInfo'), action: 'showInfo' },
+                { label: t('showAlbum'), action: 'showAlbum' },
               ].map(({ label, action }) => (
                 <Pressable
                   key={action}
@@ -453,7 +455,7 @@ export default function PlayingScreen() {
 
               <Pressable onPress={closeOptions} className="mt-3">
                 <Text className="text-gray-400 text-center text-sm">
-                  Cancel
+                  {t('cancel')}
                 </Text>
               </Pressable>
             </View>

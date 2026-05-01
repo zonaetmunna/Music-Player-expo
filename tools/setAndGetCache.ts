@@ -1,13 +1,13 @@
-import { Song } from "@/types/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { Song } from '@/types/types';
 
-const CACHE_PREFIX_STRICT = "songMetadata:mtime:";
-const CACHE_PREFIX_LOOSE = "songMetadata:uri:";
+const CACHE_PREFIX_STRICT = 'songMetadata:mtime:';
+const CACHE_PREFIX_LOOSE = 'songMetadata:uri:';
 
 // Strict cache (uses modificationTime when available)
 export async function getCachedMetadata(
   uri: string,
-  modificationTime?: number
+  modificationTime?: number,
 ): Promise<Song | null> {
   if (!modificationTime) return null;
   const key = `${CACHE_PREFIX_STRICT}${uri}:${modificationTime}`;
@@ -18,7 +18,7 @@ export async function getCachedMetadata(
 export async function setCachedMetadata(
   uri: string,
   modificationTime: number,
-  data: Song
+  data: Song,
 ) {
   const key = `${CACHE_PREFIX_STRICT}${uri}:${modificationTime}`;
   await AsyncStorage.setItem(key, JSON.stringify(data));
@@ -26,7 +26,7 @@ export async function setCachedMetadata(
 
 // Loose cache (keyed only by URI – use when modTime is unavailable)
 export async function getCachedMetadataLoose(
-  uri: string
+  uri: string,
 ): Promise<Song | null> {
   const key = `${CACHE_PREFIX_LOOSE}${uri}`;
   const cached = await AsyncStorage.getItem(key);

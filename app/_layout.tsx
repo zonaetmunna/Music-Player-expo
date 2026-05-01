@@ -1,31 +1,32 @@
-import PlayerBinder from "@/components/PlayerBinder";
-import { Stack } from "expo-router";
-import { useEffect } from "react";
-import { I18nManager, StatusBar } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { I18nManager, StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import TrackPlayer from 'react-native-track-player';
+import { Toaster, toast } from 'sonner-native';
+import PlayerBinder from '@/components/PlayerBinder';
+import { useColors } from '@/constants/tokens';
+import { initDB } from '@/tools/db';
+import { setupPlayer } from '@/tools/services/trackPlayerService';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
+import '../global.css';
 
-import { initDB } from "@/tools/db";
-import { setupPlayer } from "@/tools/services/trackPlayerService";
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import TrackPlayer from "react-native-track-player";
-import { toast, Toaster } from "sonner-native";
-import "../global.css";
-
-import playbackService from "@/service";
+import playbackService from '@/service';
 
 TrackPlayer.registerPlaybackService(() => playbackService);
 
 export default function Layout() {
   const loadLibrary = usePlayerStore((s) => s.loadLibrary);
   const loadFavorites = usePlaylistStore((s) => s.loadFavorites);
+  const colors = useColors();
 
   useEffect(() => {
     async function initialize() {
       try {
         await initDB();
       } catch (error) {
-        console.error("Error initializing database:", error);
+        console.error('Error initializing database:', error);
         toast.error(`Error initializing database: ${error}`);
         // Handle the error appropriately (e.g., display an error message)
       }
@@ -64,45 +65,45 @@ export default function Layout() {
         <Stack>
           <Stack.Screen
             name="(tabs)"
-            options={{ headerShown: false, headerTitleAlign: "center" }}
+            options={{ headerShown: false, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Playing"
             options={{
-              presentation: "transparentModal",
+              presentation: 'transparentModal',
               gestureEnabled: true,
-              gestureDirection: "vertical",
+              gestureDirection: 'vertical',
               animationDuration: 100,
               headerShown: false,
-              animation: "slide_from_bottom",
+              animation: 'slide_from_bottom',
             }}
           />
           <Stack.Screen
             name="Queue"
             options={{
-              presentation: "transparentModal",
+              presentation: 'transparentModal',
               gestureEnabled: true,
-              gestureDirection: "vertical",
+              gestureDirection: 'vertical',
               animationDuration: 100,
               headerShown: false,
-              animation: "slide_from_bottom",
+              animation: 'slide_from_bottom',
             }}
           />
           <Stack.Screen
             name="(modals)/addToPlaylist"
             options={{
-              presentation: "transparentModal",
+              presentation: 'transparentModal',
               gestureEnabled: true,
-              gestureDirection: "vertical",
+              gestureDirection: 'vertical',
               animationDuration: 100,
               headerShown: false,
-              animation: "slide_from_bottom", // smoother exit
+              animation: 'slide_from_bottom', // smoother exit
             }}
           />
 
           <Stack.Screen
             name="info"
-            options={{ headerShown: false, headerTitleAlign: "center" }}
+            options={{ headerShown: false, headerTitleAlign: 'center' }}
           />
 
           <Stack.Screen
@@ -132,8 +133,18 @@ export default function Layout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="settings"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
-        <StatusBar barStyle={"dark-content"} />
+        <StatusBar
+          barStyle={
+            colors.background === '#000' ? 'light-content' : 'dark-content'
+          }
+        />
         <Toaster position="top-center" richColors />
       </GestureHandlerRootView>
     </SafeAreaProvider>

@@ -1,19 +1,17 @@
-// components/TracksList.tsx
-
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, {
-  RefObject,
+  type RefObject,
   useCallback,
   useEffect,
   useRef,
   useState,
-} from "react";
-import { FlatListProps, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import QueueControls from "./QueueControls";
-import TracksListItem from "./TracksListItem";
+} from 'react';
+import { type FlatListProps, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
+import QueueControls from './QueueControls';
+import TracksListItem from './TracksListItem';
 
 export type TracksListProps = Partial<FlatListProps<Song>> & {
   tracks: Song[];
@@ -42,7 +40,7 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
       autoScrollToCurrent = true,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const router = useRouter();
     const playSongGeneric = usePlayerStore((s) => s.playSongGeneric);
@@ -69,7 +67,7 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
             track.uri ===
             (currentSongFromUseEffect
               ? currentSongFromUseEffect.uri
-              : currentSong.uri)
+              : currentSong.uri),
         );
         if (songIndex === -1) return;
 
@@ -83,7 +81,14 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
 
         return () => clearTimeout(timer);
       },
-      [autoScrollToCurrent, isLayoutReady, tracks]
+      [
+        autoScrollToCurrent,
+        isLayoutReady,
+        tracks,
+        currentSong,
+        currentSong?.uri,
+        listRef.current?.scrollToIndex,
+      ],
     );
 
     const handleLayout = useCallback(() => {
@@ -98,7 +103,7 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
       useCallback(() => {
         if (!autoScrollToCurrent) return;
         setScrollKey((k) => k + 1);
-      }, [autoScrollToCurrent])
+      }, [autoScrollToCurrent]),
     );
 
     const handlePlaySong = async (track: Song) => {
@@ -108,7 +113,7 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
       if (isInQueue) {
         router.back();
       } else {
-        router.navigate("/Playing");
+        router.navigate('/Playing');
       }
     };
 
@@ -125,7 +130,7 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
           !hideQueueControls ? <QueueControls tracks={tracks} /> : null
         }
         onScrollToIndexFailed={(info) => {
-          console.warn("ScrollToIndex failed", info);
+          console.warn('ScrollToIndex failed', info);
           setTimeout(() => {
             listRef.current?.scrollToIndex?.({
               index: info.index,
@@ -152,8 +157,8 @@ const TracksList = React.forwardRef<FlatList<Song>, TracksListProps>(
         {...rest}
       />
     );
-  }
+  },
 );
-TracksList.displayName = "TracksList";
+TracksList.displayName = 'TracksList';
 
 export default TracksList;

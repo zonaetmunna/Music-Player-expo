@@ -1,31 +1,33 @@
-import FloatingPlayer from "@/components/FloatingPlayer";
-import { fontSize, useColors } from "@/constants/tokens";
 import {
   FontAwesome,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+} from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { Tabs } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FloatingPlayer from '@/components/FloatingPlayer';
+import { useT } from '@/constants/i18n';
+import { fontSize, useColors } from '@/constants/tokens';
 
 const TabsNavigation = () => {
   const insets = useSafeAreaInsets();
+  const t = useT();
+  const colors = useColors();
 
   return (
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: useColors().primary,
+          tabBarActiveTintColor: colors.primary,
           tabBarLabelStyle: {
             fontSize: fontSize.xs,
-            fontWeight: "500",
+            fontWeight: '500',
           },
           headerShown: false,
           tabBarStyle: {
-            position: "absolute",
+            position: 'absolute',
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderTopWidth: 0,
@@ -33,7 +35,7 @@ const TabsNavigation = () => {
             paddingBottom: insets.bottom, // ✅ keep visible above system nav
             height: 60 + insets.bottom, // ✅ make room for extra padding
             zIndex: 10,
-            backgroundColor: "#000",
+            backgroundColor: colors.background,
           },
           tabBarBackground: () => (
             <BlurView
@@ -46,7 +48,7 @@ const TabsNavigation = () => {
         <Tabs.Screen
           name="favorites"
           options={{
-            title: "Favorites",
+            title: t('favorites'),
             tabBarIcon: ({ color }) => (
               <FontAwesome name="heart" size={20} color={color} />
             ),
@@ -55,7 +57,7 @@ const TabsNavigation = () => {
         <Tabs.Screen
           name="playlists"
           options={{
-            title: "Playlists",
+            title: t('playlists'),
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="playlist-play"
@@ -68,7 +70,7 @@ const TabsNavigation = () => {
         <Tabs.Screen
           name="(songs)"
           options={{
-            title: "Songs",
+            title: t('songs'),
             tabBarIcon: ({ color }) => (
               <Ionicons name="musical-notes-sharp" size={24} color={color} />
             ),
@@ -77,9 +79,18 @@ const TabsNavigation = () => {
         <Tabs.Screen
           name="artists"
           options={{
-            title: "Artists",
+            title: t('artists'),
             tabBarIcon: ({ color }) => (
               <FontAwesome6 name="users-line" size={20} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: t('profile'),
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="person-circle-outline" size={24} color={color} />
             ),
           }}
         />

@@ -1,18 +1,21 @@
-import { StackScreenWithSearchBar } from "@/constants/layouts";
-import { Stack } from "expo-router";
-import React from "react";
-import { View } from "react-native";
+import { Stack } from 'expo-router';
+import { View } from 'react-native';
+import { useT } from '@/constants/i18n';
+import { StackScreenWithSearchBar } from '@/constants/layouts';
+import { useColors } from '@/constants/tokens';
 
 const PlaylistsScreenLayout = () => {
+  const t = useT();
+  const colors = useColors();
   return (
-    <View className="flex-1 bg-[#000]">
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack>
         <Stack.Screen
           name="index"
           options={{
             ...(StackScreenWithSearchBar ?? {}),
-            headerTitle: "Playlists",
-            headerTitleAlign: "center",
+            headerTitle: t('playlists'),
+            headerTitleAlign: 'center',
           }}
         />
         <Stack.Screen
@@ -25,13 +28,13 @@ const PlaylistsScreenLayout = () => {
           name="create"
           options={{
             ...(StackScreenWithSearchBar ?? {}),
-            headerTitle: "Create New Playlist",
+            headerTitle: t('createPlaylist'),
             // headerStyle:{s},
             headerTitleStyle: {
-              color: "#fff",
+              color: colors.text,
               fontSize: 22,
             },
-            headerTitleAlign: "center",
+            headerTitleAlign: 'center',
           }}
         />
       </Stack>

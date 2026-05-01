@@ -1,12 +1,12 @@
-import ArtistTrackList from "@/components/ArtistTrackList";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Artist } from "@/types/types";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { processMusicData } from ".";
+import { MaterialIcons } from '@expo/vector-icons';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ArtistTrackList from '@/components/ArtistTrackList';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Artist } from '@/types/types';
+import { processMusicData } from '.';
 
 const ArtistDetailScreen = () => {
   const { name: artistName } = useLocalSearchParams<{ name: string }>();
@@ -14,23 +14,28 @@ const ArtistDetailScreen = () => {
   const files = usePlayerStore((s) => s.files);
 
   const router = useRouter();
+  const colors = useColors();
 
-  const decodedName = artistName.replaceAll("+", " ");
+  const decodedName = artistName.replaceAll('+', ' ');
 
   const uniqueArtists: Artist[] = processMusicData(files);
 
   const findArtist = uniqueArtists.find((artist) =>
-    artist.name.toLowerCase().includes(decodedName.toLowerCase())
+    artist.name.toLowerCase().includes(decodedName.toLowerCase()),
   );
 
   if (!findArtist) {
     console.warn(`Artist ${decodedName} not found!`);
 
-    return <Redirect href={"/(tabs)/artists"} />;
+    return <Redirect href={'/(tabs)/artists'} />;
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black px-6" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      className="px-6"
+      pointerEvents="box-none"
+    >
       <View
         className="flex-row items-center justify-between px-5 py-3 z-50"
         style={{ elevation: 10 }}

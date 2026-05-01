@@ -1,24 +1,28 @@
 // app/Queue.tsx
 
-import DismissPlayerSymbol from "@/components/DismissPlayerSymbol";
-import TracksList from "@/components/TracksList";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useRouter } from 'expo-router';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DismissPlayerSymbol from '@/components/DismissPlayerSymbol';
+import TracksList from '@/components/TracksList';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function QueueScreen() {
   const router = useRouter();
   const queue = usePlayerStore((s) => s.queue);
+  const t = useT();
+  const colors = useColors();
   const translateY = useSharedValue(0);
 
   const panGesture = Gesture.Pan()
@@ -48,11 +52,11 @@ export default function QueueScreen() {
   }));
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,
-          { backgroundColor: "rgba(0,0,0,1)" },
+          { backgroundColor: 'rgba(0,0,0,1)' },
           backgroundStyle,
         ]}
       />
@@ -61,10 +65,10 @@ export default function QueueScreen() {
           style={[
             {
               flex: 1,
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: 'rgba(0,0,0,0.5)',
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              overflow: "hidden",
+              overflow: 'hidden',
             },
             cardStyle,
           ]}
@@ -75,7 +79,7 @@ export default function QueueScreen() {
 
           {queue.length === 0 ? (
             <View className="flex-1 items-center justify-center bg-black">
-              <Text className="text-white">Queue is empty</Text>
+              <Text className="text-white">{t('queueEmpty')}</Text>
             </View>
           ) : (
             <TracksList

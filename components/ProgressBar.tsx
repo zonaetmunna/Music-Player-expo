@@ -1,14 +1,14 @@
-import formatDuration from "@/tools/formatDuration";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import Slider from "@react-native-community/slider";
-import React from "react";
-import { Text, View } from "react-native";
-import { useProgress } from "react-native-track-player";
+import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Text, View } from 'react-native';
+import { useProgress } from 'react-native-track-player';
+import formatDuration from '@/tools/formatDuration';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
 
 const ProgressBar = React.memo(
   ({ queueIndex }: { queueIndex: string | number }) => {
     const handleChangeSongPosition = usePlayerStore(
-      (s) => s.handleChangeSongPosition
+      (s) => s.handleChangeSongPosition,
     );
     const { position, duration } = useProgress();
 
@@ -24,7 +24,7 @@ const ProgressBar = React.memo(
           <Text className="text-gray-400">{formatDuration(duration)}</Text>
         </View>
         <Slider
-          style={{ width: "100%", height: 40 }}
+          style={{ width: '100%', height: 40 }}
           minimumValue={0}
           maximumValue={duration}
           value={position}
@@ -35,9 +35,9 @@ const ProgressBar = React.memo(
         />
       </>
     );
-  }
+  },
 );
 
-ProgressBar.displayName = "ProgressBar";
+ProgressBar.displayName = 'ProgressBar';
 
 export default ProgressBar;

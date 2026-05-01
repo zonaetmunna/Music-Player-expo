@@ -1,10 +1,11 @@
-import { Stack } from "expo-router";
-import React from "react";
-import { View } from "react-native";
+import { Stack } from 'expo-router';
+import { View } from 'react-native';
+import { useColors } from '@/constants/tokens';
 
 const SongInfoLayout = () => {
+  const colors = useColors();
   return (
-    <View className="flex-1 bg-[#000]">
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack>
         <Stack.Screen name="[id]" options={{ headerShown: false }} />
       </Stack>

@@ -1,9 +1,7 @@
-import { unknownTrackImageUri } from "@/constants/images";
-import { usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -12,19 +10,26 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
-} from "react-native-safe-area-context";
+} from 'react-native-safe-area-context';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import { useColors } from '@/constants/tokens';
+import { usePlaylistStore } from '@/tools/store/usePlayerStore';
+
 // import { usePlaylistStore } from "@/tools/store/usePlaylistStore";
 
 const CreatePlaylist = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const t = useT();
+  const colors = useColors();
 
   const addPlaylist = usePlaylistStore((s) => s.addPlaylist);
 
@@ -40,25 +45,26 @@ const CreatePlaylist = () => {
 
   return (
     <SafeAreaView
-      className="flex-1 bg-black px-6"
+      className="flex-1 px-6"
       style={{
+        backgroundColor: colors.background,
         paddingBottom: insets.bottom === 0 ? 16 : insets.bottom,
       }}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 justify-center"
       >
         {/* Title */}
         <Text className="text-3xl font-bold text-white mb-10 text-center">
-          Create Playlist
+          {t('createPlaylist')}
         </Text>
 
         {/* Input field */}
         <View className="bg-neutral-900 rounded-2xl px-4 py-3 border border-neutral-800 mb-6">
           <TextInput
             className="text-white text-lg"
-            placeholder="Playlist name"
+            placeholder={t('playlistName')}
             placeholderTextColor="#666"
             value={name}
             onChangeText={setName}
@@ -70,7 +76,7 @@ const CreatePlaylist = () => {
         <View className="bg-neutral-900 rounded-2xl px-4 py-3 border border-neutral-800 mb-6">
           <TextInput
             className="text-white text-lg"
-            placeholder="Playlist Description"
+            placeholder={t('playlistDescription')}
             placeholderTextColor="#666"
             value={description}
             onChangeText={setDescription}
@@ -88,13 +94,14 @@ const CreatePlaylist = () => {
             <View className="ml-4 flex-1">
               <Text
                 className={`text-lg font-semibold ${
-                  name.trim() ? "text-white" : "text-neutral-500"
+                  name.trim() ? 'text-white' : 'text-neutral-500'
                 }`}
               >
-                {name.trim() || "New Playlist"}
+                {name.trim() || t('newPlaylist')}
               </Text>
               <Text className="text-neutral-400 text-sm">
-                0 songs • From You {description && ` • ${description}`}
+                0 {t('songsCountSuffix')} • {t('fromYou')}{' '}
+                {description && ` • ${description}`}
               </Text>
             </View>
           </View>
@@ -106,18 +113,18 @@ const CreatePlaylist = () => {
           onPress={handleCreatePlaylist}
           activeOpacity={0.8}
           className={`rounded-2xl overflow-hidden shadow-lg ${
-            !name.trim() ? "opacity-50" : ""
+            !name.trim() ? 'opacity-50' : ''
           }`}
         >
           <LinearGradient
-            colors={["#7C3AED", "#4F46E5"]}
+            colors={['#7C3AED', '#4F46E5']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className="py-4 flex-row justify-center items-center"
           >
             <Ionicons name="pulse" size={22} color="white" className="mr-2" />
             <Text className="text-white text-lg font-semibold">
-              Create Playlist
+              {t('createPlaylist')}
             </Text>
           </LinearGradient>
         </TouchableOpacity>

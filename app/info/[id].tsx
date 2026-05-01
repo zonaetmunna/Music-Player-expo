@@ -1,12 +1,7 @@
-import { AnimatedButton } from "@/components/AnimatedButton";
-import formatDuration from "@/tools/formatDuration";
-import { handleFetchingLyrics } from "@/tools/handleFetchingLyrics";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { Link, Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -14,9 +9,16 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { toast } from "sonner-native";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { toast } from 'sonner-native';
+import { AnimatedButton } from '@/components/AnimatedButton';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import formatDuration from '@/tools/formatDuration';
+import { handleFetchingLyrics } from '@/tools/handleFetchingLyrics';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 const SongInfoScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +27,8 @@ const SongInfoScreen = () => {
   const getSongInfo = usePlayerStore((s) => s.getSongInfo);
 
   const router = useRouter();
+  const t = useT();
+  const colors = useColors();
 
   const [song, setSong] = useState<Song | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +41,7 @@ const SongInfoScreen = () => {
         const info = await getSongInfo(id);
         if (mounted) setSong(info);
       } catch (err) {
-        console.error("Error loading song info:", err);
+        console.error('Error loading song info:', err);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -60,7 +64,7 @@ const SongInfoScreen = () => {
   if (!id) {
     console.warn(`Song with ${id} was not found!`);
     toast.warning(`Song with ${id} was not found!`);
-    return <Redirect href={"/(tabs)/playlists"} />;
+    return <Redirect href={'/(tabs)/playlists'} />;
   }
 
   if (loading) {
@@ -74,13 +78,13 @@ const SongInfoScreen = () => {
   if (!song) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-400 text-lg">Song not found</Text>
+        <Text className="text-gray-400 text-lg">{t('songNotFound')}</Text>
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black">
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="flex-row items-center justify-between px-5 pt-3 z-10">
         <TouchableOpacity className="z-50" onPress={() => router.back()}>
           <MaterialIcons
@@ -90,7 +94,7 @@ const SongInfoScreen = () => {
             color="#fff"
           />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-bold">Song Info</Text>
+        <Text className="text-white text-lg font-bold">{t('songInfo')}</Text>
         <View className="opacity-0">
           <Text>Go</Text>
         </View>
@@ -134,21 +138,21 @@ const SongInfoScreen = () => {
             numberOfLines={1}
             className="text-white text-2xl font-bold text-center"
           >
-            {song.title || "Unknown Title"}
+            {song.title || t('unknownTitle')}
           </Text>
           <Text
             numberOfLines={1}
             className="text-gray-400 text-lg text-center mt-1"
           >
-            {song.artist || "Unknown Artist"}
+            {song.artist || t('unknownArtist')}
           </Text>
 
           <View className="flex-row justify-center mt-3 space-x-3">
             {song.album && (
               <Link
                 href={{
-                  pathname: "/album/[name]",
-                  params: { name: song.album.replaceAll(" ", "+") },
+                  pathname: '/album/[name]',
+                  params: { name: song.album.replaceAll(' ', '+') },
                 }}
                 className="text-gray-400 text-sm"
               >
@@ -176,7 +180,7 @@ const SongInfoScreen = () => {
             )}
             <View className="flex-row items-center space-x-2">
               <Text className="text-gray-400 text-sm">
-                ▶️ {song.playCount || 0} plays
+                ▶️ {song.playCount || 0} {t('playsSuffix')}
               </Text>
             </View>
           </View>
@@ -186,13 +190,13 @@ const SongInfoScreen = () => {
         <View className="mt-10 px-8 space-y-4 gap-y-4">
           <AnimatedButton
             color="green"
-            label={!!song.lyrics ? "Edit Lyrics?" : "Add Lyrics"}
+            label={song.lyrics ? t('editLyricsQuestion') : t('addLyrics')}
             onPress={() =>
               router.push({
-                pathname: !!song.syncedLyrics
-                  ? "/lyrics/editsynced/[id]"
-                  : "/lyrics/edit/[id]",
-                params: { id: song.id || "" },
+                pathname: song.syncedLyrics
+                  ? '/lyrics/editsynced/[id]'
+                  : '/lyrics/edit/[id]',
+                params: { id: song.id || '' },
               })
             }
           />
@@ -203,14 +207,14 @@ const SongInfoScreen = () => {
             label={
               song.lyrics
                 ? song.syncedLyrics
-                  ? "Edit Synced timestamps"
-                  : "Sync Lyrics"
-                : "Fetch/Add Lyrics first"
+                  ? t('editSyncedTimestamps')
+                  : t('syncLyrics')
+                : t('fetchAddLyricsFirst')
             }
             onPress={() =>
               router.push({
-                pathname: "/lyrics/sync/[id]",
-                params: { id: song.id || "" },
+                pathname: '/lyrics/sync/[id]',
+                params: { id: song.id || '' },
               })
             }
           />
@@ -219,8 +223,8 @@ const SongInfoScreen = () => {
             color="green"
             label={
               !song.lyrics && !song.syncedLyrics
-                ? "Fetch Lyrics"
-                : "Re-Fetch Lyrics"
+                ? t('fetchLyrics')
+                : t('refetchLyrics')
             }
             onPress={() => fetchingLyrics()}
           />
@@ -229,11 +233,11 @@ const SongInfoScreen = () => {
 
           <AnimatedButton
             color="green"
-            label="Edit Song"
+            label={t('editSong')}
             onPress={() =>
               router.push({
-                pathname: "/edit/[id]",
-                params: { id: song.id || "" },
+                pathname: '/edit/[id]',
+                params: { id: song.id || '' },
               })
             }
           />

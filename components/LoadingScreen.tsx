@@ -1,9 +1,13 @@
-import React from "react";
-import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
 
 const LoadingScreen = () => {
   const spinValue = React.useRef(new Animated.Value(0)).current;
   const dotPosition = React.useRef(new Animated.Value(0)).current;
+  const t = useT();
+  const colors = useColors();
 
   React.useEffect(() => {
     Animated.loop(
@@ -12,7 +16,7 @@ const LoadingScreen = () => {
         duration: 2000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
 
     Animated.loop(
@@ -21,13 +25,13 @@ const LoadingScreen = () => {
         duration: 3000, // Adjust for dot speed
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
-  }, []);
+  }, [dotPosition, spinValue]);
 
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
+    outputRange: ['0deg', '360deg'],
   });
 
   const dotX = dotPosition.interpolate({
@@ -41,7 +45,10 @@ const LoadingScreen = () => {
   });
 
   return (
-    <View className="flex-1 bg-[#121212] justify-center items-center">
+    <View
+      className="flex-1 justify-center items-center"
+      style={{ backgroundColor: colors.background }}
+    >
       {/* Glowing Circle */}
       <Animated.View
         style={[
@@ -55,11 +62,11 @@ const LoadingScreen = () => {
         {/* White Dot */}
         <Animated.View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 16,
             height: 16,
             borderRadius: 8,
-            backgroundColor: "white",
+            backgroundColor: 'white',
             top: 54 - 8, // Centers vertically
             left: 54 - 8, // Centers horizontally.
             transform: [{ translateX: dotX }, { translateY: dotY }],
@@ -69,7 +76,7 @@ const LoadingScreen = () => {
 
       {/* Text with neumorphism effect */}
       <Text className="text-3xl font-bold text-white mt-8 shadow-md">
-        Loading...
+        {t('loading')}
       </Text>
     </View>
   );

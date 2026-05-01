@@ -1,16 +1,15 @@
-// usePlayerBackground.ts
-import { useEffect, useRef, useState } from "react";
-import { Animated } from "react-native";
-import type { ImageColorsResult } from "react-native-image-colors";
-import { getColors } from "react-native-image-colors";
+import { useEffect, useRef, useState } from 'react';
+import { Animated } from 'react-native';
+import type { ImageColorsResult } from 'react-native-image-colors';
+import { getColors } from 'react-native-image-colors';
 
-const DEFAULT_COLOR = "#000000";
+const DEFAULT_COLOR = '#000000';
 
 const pickColorFromResult = (colors: ImageColorsResult) => {
   if (!colors) return DEFAULT_COLOR;
 
   // android has: dominant, average, vibrant, darkVibrant, ...
-  if (colors.platform === "android") {
+  if (colors.platform === 'android') {
     return (
       (colors as any).dominant ??
       (colors as any).vibrant ??
@@ -20,14 +19,14 @@ const pickColorFromResult = (colors: ImageColorsResult) => {
   }
 
   // ios has: background, detail, primary, secondary
-  if (colors.platform === "ios") {
+  if (colors.platform === 'ios') {
     return (
       (colors as any).background ?? (colors as any).primary ?? DEFAULT_COLOR
     );
   }
 
   // web: hex is available
-  if (colors.platform === "web") {
+  if (colors.platform === 'web') {
     return (colors as any).hex ?? DEFAULT_COLOR;
   }
 
@@ -55,13 +54,6 @@ const usePlayerBackground = (imageUrl?: string) => {
         if (!mounted) return;
 
         const newColor = pickColorFromResult(colors);
-        console.log(
-          "[usePlayerBackground] colors",
-          colors.platform,
-          colors,
-          " -> picked:",
-          newColor
-        );
 
         if (!newColor || newColor === currentColor) {
           // nothing to do
@@ -80,7 +72,7 @@ const usePlayerBackground = (imageUrl?: string) => {
         }).start();
       })
       .catch((err) => {
-        console.warn("[usePlayerBackground] getColors failed:", err);
+        console.warn('[usePlayerBackground] getColors failed:', err);
         // leave currentColor as-is (fallback)
       });
 

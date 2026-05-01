@@ -1,9 +1,6 @@
-import coverImage from "@/assets/placeholder2.jpg";
-import { AnimatedButton } from "@/components/AnimatedButton";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -11,15 +8,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import coverImage from '@/assets/placeholder2.jpg';
+import { AnimatedButton } from '@/components/AnimatedButton';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 export default function EditSyncedLyricsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getSongInfo } = usePlayerStore();
+  const t = useT();
+  const colors = useColors();
 
-  const [song, setSong] = useState<any>(null);
+  const [song, setSong] = useState<Song | null>(null);
   const [unSyncedLyrics, setUnSyncedLyrics] = useState<
     { index: number; time: number; text: string }[]
   >([]);
@@ -37,11 +42,11 @@ export default function EditSyncedLyricsScreen() {
       if (info?.syncedLyrics) {
         // Parse synced lyrics (LRC format)
         const parsed = info.syncedLyrics
-          .split("\n")
+          .split('\n')
           .filter(Boolean)
           .map((line: string, index: number) => {
             const match = line.match(/\[(\d+):(\d+)\.(\d+)\]\s*(.*)/);
-            if (!match) return { index, time: 0, text: line.trim() || " " };
+            if (!match) return { index, time: 0, text: line.trim() || ' ' };
             const minutes = parseInt(match[1], 10);
             const seconds = parseInt(match[2], 10);
             const centiseconds = parseInt(match[3], 10);
@@ -54,7 +59,7 @@ export default function EditSyncedLyricsScreen() {
         if (info?.lyrics) {
           // fallback to unsynced plain lyrics
           const fallback = info.lyrics
-            .split("\n")
+            .split('\n')
             .filter(Boolean)
             .map((text, index) => ({ index, time: 0, text }));
           setUnSyncedLyrics(fallback);
@@ -62,7 +67,7 @@ export default function EditSyncedLyricsScreen() {
       } else if (info?.lyrics) {
         // fallback to unsynced plain lyrics
         const fallback = info.lyrics
-          .split("\n")
+          .split('\n')
           .filter(Boolean)
           .map((text, index) => ({ index, time: 0, text }));
         setLines(fallback);
@@ -72,7 +77,7 @@ export default function EditSyncedLyricsScreen() {
 
   const handleChangeText = (index: number, newText: string) => {
     setLines((prev) =>
-      prev.map((l) => (l.index === index ? { ...l, text: newText } : l))
+      prev.map((l) => (l.index === index ? { ...l, text: newText } : l)),
     );
   };
 
@@ -84,24 +89,24 @@ export default function EditSyncedLyricsScreen() {
           const minutes = Math.floor(time / 60);
           const seconds = Math.floor(time % 60);
           const centiseconds = Math.floor((time % 1) * 100);
-          return `[${String(minutes).padStart(2, "0")}:${String(
-            seconds
+          return `[${String(minutes).padStart(2, '0')}:${String(
+            seconds,
           ).padStart(
             2,
-            "0"
-          )}.${String(centiseconds).padStart(2, "0")}] ${text}`;
+            '0',
+          )}.${String(centiseconds).padStart(2, '0')}] ${text}`;
         })
-        .join("\n");
+        .join('\n');
 
       await usePlayerStore.getState().updateSongSyncedLyrics(id, formatted);
       router.back();
     } catch (err) {
-      console.error("Error saving synced lyrics:", err);
+      console.error('Error saving synced lyrics:', err);
     }
   };
 
   const handleCopyLines = () => {
-    console.log("Holla");
+    console.log('Holla');
     const holder = [];
 
     for (let i = 0; i < unSyncedLyrics.length; i++) {
@@ -115,12 +120,15 @@ export default function EditSyncedLyricsScreen() {
   if (!song)
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-400">Loading...</Text>
+        <Text className="text-gray-400">{t('loading')}</Text>
       </View>
     );
 
   return (
-    <SafeAreaView className="flex-1 bg-black" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      pointerEvents="box-none"
+    >
       {/* Header */}
       <View
         className="flex-row items-center justify-between px-5 pt-3"
@@ -129,7 +137,9 @@ export default function EditSyncedLyricsScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-bold">Edit Synced Lyrics</Text>
+        <Text className="text-white text-lg font-bold">
+          {t('editSyncedLyrics')}
+        </Text>
         <TouchableOpacity onPress={handleSave}>
           <FontAwesome6 name="check" size={26} color="#22c55e" />
         </TouchableOpacity>
@@ -138,29 +148,31 @@ export default function EditSyncedLyricsScreen() {
       {/* Cover Art */}
       <View className="mt-6 items-center">
         <Image
-          source={song.coverArt ? { uri: song.coverArt } : (coverImage as any)}
+          source={song.coverArt ? { uri: song.coverArt } : coverImage}
           className="w-64 h-64 rounded-2xl border border-neutral-800 shadow-lg shadow-black"
           resizeMode="cover"
         />
         <Text className="text-white text-xl font-semibold mt-4">
-          {song.title || "Unknown Title"}
+          {song.title || t('unknownTitle')}
         </Text>
-        <Text className="text-gray-400">{song.artist || "Unknown Artist"}</Text>
+        <Text className="text-gray-400">
+          {song.artist || t('unknownArtist')}
+        </Text>
       </View>
       <View className="w-full px-8 gap-y-4 mt-8 z-50">
         <AnimatedButton
           color="green"
-          label="Edit UnSync Lyrics"
+          label={t('editUnsyncedLyrics')}
           onPress={() =>
             router.push({
-              pathname: "/lyrics/edit/[id]",
-              params: { id: song.id },
+              pathname: '/lyrics/edit/[id]',
+              params: { id: song.id || '' },
             })
           }
         />
         <AnimatedButton
           color="cyan"
-          label="Copy Line From UnSynced"
+          label={t('copyLineFromUnsynced')}
           onPress={() => handleCopyLines()}
         />
       </View>
@@ -172,21 +184,21 @@ export default function EditSyncedLyricsScreen() {
       >
         {lines.map((line, index) => (
           <View
-            key={index}
+            key={`${line.time}-${line.text}`}
             className="mx-6 my-2 px-4 py-3 rounded-2xl bg-neutral-800/60 border border-neutral-700"
           >
             <Text className="text-gray-400 mb-2 text-sm">
-              {`[${String(Math.floor(line.time / 60)).padStart(2, "0")}:${String(
-                Math.floor(line.time % 60)
-              ).padStart(2, "0")}.${String(
-                Math.floor((line.time % 1) * 100)
-              ).padStart(2, "0")}]`}
+              {`[${String(Math.floor(line.time / 60)).padStart(2, '0')}:${String(
+                Math.floor(line.time % 60),
+              ).padStart(2, '0')}.${String(
+                Math.floor((line.time % 1) * 100),
+              ).padStart(2, '0')}]`}
             </Text>
             <TextInput
               multiline
               value={line.text}
               onChangeText={(t) => handleChangeText(index, t)}
-              placeholder="Edit line..."
+              placeholder={t('editLinePlaceholder')}
               placeholderTextColor="#777"
               className="text-white text-base"
             />

@@ -1,8 +1,6 @@
-import { unknownTrackImageUri } from "@/constants/images";
-import { Artist } from "@/types/types";
-import { Ionicons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import React, { useMemo, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useMemo, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -10,21 +8,25 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import QueueControls from "./QueueControls";
-import TracksList from "./TracksList";
+} from 'react-native';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import type { Artist } from '@/types/types';
+import QueueControls from './QueueControls';
+import TracksList from './TracksList';
 
 const ArtistTrackList = ({ artist }: { artist: Artist }) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const t = useT();
 
   // Filtered tracks based on search
   const filteredSongs = useMemo(() => {
-    if (search.trim() === "") return artist.songs;
+    if (search.trim() === '') return artist.songs;
     const lowerSearch = search.toLowerCase();
     return artist.songs.filter(
       (t) =>
         t?.title?.toLowerCase().includes(lowerSearch) ||
-        t?.album?.toLowerCase().includes(lowerSearch)
+        t?.album?.toLowerCase().includes(lowerSearch),
     );
   }, [artist.songs, search]);
 
@@ -36,7 +38,7 @@ const ArtistTrackList = ({ artist }: { artist: Artist }) => {
         <View className="flex-row items-center w-full bg-neutral-800 rounded-lg px-3">
           <TextInput
             className="text-white text-base flex-1 py-2"
-            placeholder={`Search in ${artist.name}'s songs`}
+            placeholder={`${t('searchInArtistSongs')} (${artist.name})`}
             placeholderTextColor="#999"
             value={search}
             onChangeText={setSearch}
@@ -44,7 +46,7 @@ const ArtistTrackList = ({ artist }: { artist: Artist }) => {
           {search ? (
             <TouchableOpacity
               className="pl-2 py-2"
-              onPress={() => setSearch("")}
+              onPress={() => setSearch('')}
             >
               <Ionicons name="close" color="red" size={20} />
             </TouchableOpacity>
@@ -98,22 +100,22 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   artworkImageContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     height: 200,
   },
   artistImage: {
-    width: "60%",
-    height: "100%",
-    resizeMode: "cover",
+    width: '60%',
+    height: '100%',
+    resizeMode: 'cover',
     borderRadius: 128,
   },
   artistNameText: {
-    color: "#fff",
+    color: '#fff',
     marginTop: 22,
     marginBottom: 22,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: '800',
   },
 });

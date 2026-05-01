@@ -1,15 +1,14 @@
-import coverImage from "@/assets/placeholder2.jpg";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Image, Pressable, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import TextTicker from "react-native-text-ticker";
+import { useRouter } from 'expo-router';
+import { Image, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import TextTicker from 'react-native-text-ticker';
+import coverImage from '@/assets/placeholder2.jpg';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
 import {
   PlayPauseButton,
   SkipToLastButton,
   SkipToNextButton,
-} from "./PlayerControls";
+} from './PlayerControls';
 
 const FloatingPlayer = () => {
   const currentSong = usePlayerStore((s) => s.currentSong);
@@ -28,7 +27,7 @@ const FloatingPlayer = () => {
   return (
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 8,
         right: 8,
         bottom: insets.bottom + TAB_BAR_HEIGHT + 8, // ✅ safe offset
@@ -37,7 +36,7 @@ const FloatingPlayer = () => {
       className="px-2 flex flex-1 flex-row justify-between items-center bg-[#252525] rounded-xl"
     >
       <View className="flex flex-1 w-full flex-row px-2 items-center h-24">
-        <Pressable className="" onPress={() => router.navigate("/Playing")}>
+        <Pressable className="" onPress={() => router.navigate('/Playing')}>
           <Image
             source={
               currentSong?.coverArt ? { uri: currentSong.coverArt } : coverImage
@@ -51,7 +50,7 @@ const FloatingPlayer = () => {
 
         <Pressable
           className="ml-1.5 h-24 flex justify-center max-w-[50%]"
-          onPress={() => router.navigate("/Playing")}
+          onPress={() => router.navigate('/Playing')}
         >
           <View className="flex-1 justify-center flex-col text-white">
             <TextTicker

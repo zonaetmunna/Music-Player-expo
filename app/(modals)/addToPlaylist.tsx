@@ -1,30 +1,31 @@
-import DismissPlayerSymbol from "@/components/DismissPlayerSymbol";
-import LoadingScreen from "@/components/LoadingScreen";
-import PlaylistsList from "@/components/PlaylistsList";
-import { usePlayerStore, usePlaylistStore } from "@/tools/store/usePlayerStore";
-import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Dimensions,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+} from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 import {
   SafeAreaView,
   useSafeAreaInsets,
-} from "react-native-safe-area-context";
+} from 'react-native-safe-area-context';
+import DismissPlayerSymbol from '@/components/DismissPlayerSymbol';
+import LoadingScreen from '@/components/LoadingScreen';
+import PlaylistsList from '@/components/PlaylistsList';
+import { useT } from '@/constants/i18n';
+import { usePlayerStore, usePlaylistStore } from '@/tools/store/usePlayerStore';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function AddToPlaylist() {
   const { trackUri } = useLocalSearchParams<{ trackUri: string }>();
@@ -39,7 +40,7 @@ export default function AddToPlaylist() {
       const fetchPlaylists = async () => {
         try {
           setIsLoading(true);
-          await loadPlaylists("user");
+          await loadPlaylists('user');
         } catch (error) {
           console.error(error);
         } finally {
@@ -48,7 +49,7 @@ export default function AddToPlaylist() {
       };
 
       fetchPlaylists();
-    }, [loadPlaylists, setIsLoading])
+    }, [loadPlaylists, setIsLoading]),
   );
 
   const getPlaylists = usePlaylistStore((s) => s.playlists);
@@ -57,18 +58,19 @@ export default function AddToPlaylist() {
   const files = usePlayerStore((s) => s.files);
 
   const track = files.filter(
-    (item) => decodeURIComponent(item.uri) === trackUri
+    (item) => decodeURIComponent(item.uri) === trackUri,
   );
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const t = useT();
 
   const filteredPlaylists = useMemo(() => {
-    if (search.trim() === "") return getPlaylists;
+    if (search.trim() === '') return getPlaylists;
     const lowerSearch = search.toLowerCase();
     return getPlaylists.filter(
       (t) =>
         t?.name?.toLowerCase().includes(lowerSearch) ||
-        t?.description?.toLowerCase().includes(lowerSearch)
+        t?.description?.toLowerCase().includes(lowerSearch),
     );
   }, [getPlaylists, search]);
 
@@ -113,7 +115,7 @@ export default function AddToPlaylist() {
     });
 
   const onPlaylistPress = async (playlistId: string) => {
-    addTrackToPlaylist(playlistId, track[0].id || "");
+    addTrackToPlaylist(playlistId, track[0].id || '');
     router.dismiss();
   };
 
@@ -132,7 +134,7 @@ export default function AddToPlaylist() {
         style={[
           {
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: "rgba(0,0,0,0.5)",
+            backgroundColor: 'rgba(0,0,0,0.5)',
           },
           backgroundStyle,
         ]}
@@ -143,10 +145,10 @@ export default function AddToPlaylist() {
           style={[
             {
               flex: 1,
-              backgroundColor: "rgba(0,0,0,0.9)",
+              backgroundColor: 'rgba(0,0,0,0.9)',
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              overflowY: "scroll",
+              overflowY: 'scroll',
             },
             cardStyle,
           ]}
@@ -158,7 +160,7 @@ export default function AddToPlaylist() {
             <View className="flex-row items-center w-full bg-neutral-800 rounded-lg px-3">
               <TextInput
                 className="text-white text-base flex-1 py-2"
-                placeholder="Search in Playlists"
+                placeholder={t('searchInPlaylists')}
                 placeholderTextColor="#999"
                 value={search}
                 onChangeText={setSearch}
@@ -166,7 +168,7 @@ export default function AddToPlaylist() {
               {search ? (
                 <TouchableOpacity
                   className="pl-2 py-2"
-                  onPress={() => setSearch("")}
+                  onPress={() => setSearch('')}
                 >
                   <Ionicons name="close" color="red" size={20} />
                 </TouchableOpacity>

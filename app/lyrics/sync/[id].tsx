@@ -1,45 +1,49 @@
-import coverImage from "@/assets/placeholder2.jpg";
-import { PlayPauseButton } from "@/components/PlayerControls";
-import formatDuration from "@/tools/formatDuration";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import type { ElementRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 import {
   SafeAreaView,
   useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import TrackPlayer, { useProgress } from "react-native-track-player";
+} from 'react-native-safe-area-context';
+import TrackPlayer, { useProgress } from 'react-native-track-player';
+import coverImage from '@/assets/placeholder2.jpg';
+import { PlayPauseButton } from '@/components/PlayerControls';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import formatDuration from '@/tools/formatDuration';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 export default function SyncLyricsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { getSongInfo } = usePlayerStore();
+  const t = useT();
+  const colors = useColors();
 
   const handleForwardPosition = usePlayerStore((s) => s.handleForwardPosition);
   const handlebackwardPosition = usePlayerStore(
-    (s) => s.handlebackwardPosition
+    (s) => s.handlebackwardPosition,
   );
   const handleChangeSongPosition = usePlayerStore(
-    (s) => s.handleChangeSongPosition
+    (s) => s.handleChangeSongPosition,
   );
 
-  const [song, setSong] = useState<any>(null);
+  const [song, setSong] = useState<Song | null>(null);
   const [lyrics, setLyrics] = useState<string[]>([]);
   const [synced, setSynced] = useState<
     { index: number; time: number; text: string }[]
   >([]);
 
-  const scrollRef = useRef<React.ElementRef<typeof Animated.ScrollView> | null>(
-    null
-  );
+  const scrollRef = useRef<ElementRef<typeof Animated.ScrollView> | null>(null);
   const scrollY = useSharedValue(0);
 
   useEffect(() => {
@@ -52,7 +56,7 @@ export default function SyncLyricsScreen() {
 
       if (info?.syncedLyrics) {
         // Parse LRC format into { index, time, text }
-        const lines = info.syncedLyrics.split("\n").filter(Boolean);
+        const lines = info.syncedLyrics.split('\n').filter(Boolean);
         const parsedSynced = lines.map((line, index) => {
           const match = line.match(/\[(\d+):(\d+)\.(\d+)\]\s*(.*)/);
           if (!match) return { index, time: 0, text: line }; // fallback
@@ -71,7 +75,7 @@ export default function SyncLyricsScreen() {
         setSynced(parsedSynced);
       } else if (info?.lyrics) {
         // fallback: just plain lyrics
-        setLyrics(info.lyrics.split("\n").filter(Boolean));
+        setLyrics(info.lyrics.split('\n').filter(Boolean));
         setSynced([]); // no synced timestamps yet
       }
     })();
@@ -117,21 +121,21 @@ export default function SyncLyricsScreen() {
           const minutes = Math.floor(time / 60);
           const seconds = Math.floor(time % 60);
           const centiseconds = Math.floor((time % 1) * 100); // 2 decimal places
-          return `[${String(minutes).padStart(2, "0")}:${String(
-            seconds
+          return `[${String(minutes).padStart(2, '0')}:${String(
+            seconds,
           ).padStart(
             2,
-            "0"
-          )}.${String(centiseconds).padStart(2, "0")}] ${text}`;
+            '0',
+          )}.${String(centiseconds).padStart(2, '0')}] ${text}`;
         })
-        .join("\n");
+        .join('\n');
 
       // Save to DB via player store
       await usePlayerStore.getState().updateSongSyncedLyrics(id, lrc);
 
       router.back();
     } catch (err) {
-      console.error("Error saving synced lyrics:", err);
+      console.error('Error saving synced lyrics:', err);
     }
   };
 
@@ -155,13 +159,16 @@ export default function SyncLyricsScreen() {
   if (!song) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-400">Loading...</Text>
+        <Text className="text-gray-400">{t('loading')}</Text>
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      pointerEvents="box-none"
+    >
       {/* Header */}
       <View
         className="flex-row items-center justify-between px-5 pt-3"
@@ -170,7 +177,7 @@ export default function SyncLyricsScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-bold">Sync Lyrics</Text>
+        <Text className="text-white text-lg font-bold">{t('syncLyrics')}</Text>
         <TouchableOpacity onPress={handleSave} className="z-50">
           <FontAwesome6 name="check" size={26} color="#22c55e" />
         </TouchableOpacity>
@@ -180,17 +187,17 @@ export default function SyncLyricsScreen() {
       <View className="mt-6 items-center">
         <View className="relative rounded-2xl overflow-hidden border border-neutral-800 shadow-lg shadow-black">
           <Image
-            source={
-              song.coverArt ? { uri: song.coverArt } : (coverImage as any)
-            }
+            source={song.coverArt ? { uri: song.coverArt } : coverImage}
             className="w-64 h-64 rounded-2xl"
             resizeMode="cover"
           />
         </View>
         <Text className="text-white text-xl font-semibold mt-4">
-          {song.title || "Unknown Title"}
+          {song.title || t('unknownTitle')}
         </Text>
-        <Text className="text-gray-400">{song.artist || "Unknown Artist"}</Text>
+        <Text className="text-gray-400">
+          {song.artist || t('unknownArtist')}
+        </Text>
       </View>
 
       {/* Lyrics */}
@@ -206,19 +213,19 @@ export default function SyncLyricsScreen() {
           const syncedYet = !!syncedEntry;
           return (
             <TouchableOpacity
-              key={index}
+              key={`${line}-${syncedEntry?.time ?? 0}`}
               activeOpacity={0.8}
               onPress={() => handleSelectLine(syncedEntry?.time)}
               className={`mx-6 my-2 py-3 px-3 rounded-2xl ${
                 syncedYet
-                  ? "bg-green-600/30 border border-green-500/50"
-                  : "bg-neutral-800/40 border border-neutral-700"
+                  ? 'bg-green-600/30 border border-green-500/50'
+                  : 'bg-neutral-800/40 border border-neutral-700'
               }`}
             >
               <View className="flex-row justify-between items-center">
                 <Text
                   className={`text-base max-w-[90%] ${
-                    syncedYet ? "text-green-300 font-semibold" : "text-gray-300"
+                    syncedYet ? 'text-green-300 font-semibold' : 'text-gray-300'
                   }`}
                 >
                   {line}
@@ -279,7 +286,7 @@ export default function SyncLyricsScreen() {
                   ? synced.length
                   : synced.length === lyrics.length
                     ? 0
-                    : lyrics.length - 1
+                    : lyrics.length - 1,
               )
             }
             activeOpacity={0.8}

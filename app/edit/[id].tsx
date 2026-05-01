@@ -1,10 +1,7 @@
-import { AnimatedButton } from "@/components/AnimatedButton";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Song } from "@/types/types";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -13,20 +10,27 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AnimatedButton } from '@/components/AnimatedButton';
+import { useT } from '@/constants/i18n';
+import { useColors } from '@/constants/tokens';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Song } from '@/types/types';
 
 const EditSongScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const getSongInfo = usePlayerStore((s) => s.getSongInfo);
   const editSong = usePlayerStore((s) => s.editSong);
+  const t = useT();
+  const colors = useColors();
 
   const [song, setSong] = useState<Song | null>(null);
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [album, setAlbum] = useState("");
-  const [year, setYear] = useState("");
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [album, setAlbum] = useState('');
+  const [year, setYear] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,19 +39,19 @@ const EditSongScreen = () => {
       const info = await getSongInfo(id);
       setSong(info);
       if (info) {
-        setTitle(info.title || "");
-        setArtist(info.artist || "");
-        setAlbum(info.album?.trim() || "");
-        setYear(info.year || "");
+        setTitle(info.title || '');
+        setArtist(info.artist || '');
+        setAlbum(info.album?.trim() || '');
+        setYear(info.year || '');
       }
       setLoading(false);
     })();
   }, [getSongInfo, id]);
 
   const handleSave = async () => {
-    if (!song) return;
-    await editSong(song.id!, title, artist, album, year);
-    router.dismissTo("/Playing");
+    if (!song?.id) return;
+    await editSong(song.id, title, artist, album, year);
+    router.dismissTo('/Playing');
   };
 
   if (loading)
@@ -60,12 +64,16 @@ const EditSongScreen = () => {
   if (!song)
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-400 text-lg">Song not found</Text>
+        <Text className="text-gray-400 text-lg">{t('songNotFound')}</Text>
       </View>
     );
   // console.log(song);
   return (
-    <SafeAreaView className="flex-1 bg-black b z-50" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      className="b z-50"
+      pointerEvents="box-none"
+    >
       {/* Header */}
       <View
         className="flex-row items-center justify-between px-5 pt-3 z-50"
@@ -74,7 +82,9 @@ const EditSongScreen = () => {
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-bold">Edit Song Info</Text>
+        <Text className="text-white text-lg font-bold">
+          {t('editSongInfo')}
+        </Text>
         <TouchableOpacity onPress={handleSave}>
           <FontAwesome6 name="check" size={26} color="#22c55e" />
         </TouchableOpacity>
@@ -111,15 +121,15 @@ const EditSongScreen = () => {
             </View>
           )}
           <Text className="text-white text-2xl font-bold mt-4">
-            {song.title || "Unknown Title"}
+            {song.title || t('unknownTitle')}
           </Text>
           <Text className="text-gray-400 text-base mt-1">
-            {song.artist || "Unknown Artist"}
+            {song.artist || t('unknownArtist')}
           </Text>
         </View>
 
         <View className="mx-5 mt-4">
-          <Text className="text-xl">Title:</Text>
+          <Text className="text-xl">{t('title')}:</Text>
           <BlurView
             intensity={60}
             tint="dark"
@@ -128,13 +138,13 @@ const EditSongScreen = () => {
             <TextInput
               value={title}
               onChangeText={setTitle}
-              placeholder={"Title"}
+              placeholder={t('title')}
               placeholderTextColor="#888"
               textAlignVertical="top"
               className="text-white text-base p-4 h-[50px]"
             />
           </BlurView>
-          <Text className="text-xl mt-4">Artist:</Text>
+          <Text className="text-xl mt-4">{t('artist')}:</Text>
           <BlurView
             intensity={60}
             tint="dark"
@@ -143,13 +153,13 @@ const EditSongScreen = () => {
             <TextInput
               value={artist}
               onChangeText={setArtist}
-              placeholder={"Artist"}
+              placeholder={t('artist')}
               placeholderTextColor="#888"
               textAlignVertical="top"
               className="text-white text-base p-4 h-[50px]"
             />
           </BlurView>
-          <Text className="text-xl mt-4">Album:</Text>
+          <Text className="text-xl mt-4">{t('album')}:</Text>
           <BlurView
             intensity={60}
             tint="dark"
@@ -158,13 +168,13 @@ const EditSongScreen = () => {
             <TextInput
               value={album}
               onChangeText={setAlbum}
-              placeholder={"Enter Album name"}
+              placeholder={t('enterAlbumName')}
               placeholderTextColor="#888"
               textAlignVertical="top"
               className="text-white text-base p-4 h-[50px]"
             />
           </BlurView>
-          <Text className="text-xl mt-4">Year:</Text>
+          <Text className="text-xl mt-4">{t('year')}:</Text>
           <BlurView
             intensity={60}
             tint="dark"
@@ -173,7 +183,7 @@ const EditSongScreen = () => {
             <TextInput
               value={year}
               onChangeText={setYear}
-              placeholder={"Release Year"}
+              placeholder={t('releaseYear')}
               placeholderTextColor="#888"
               textAlignVertical="top"
               className="text-white text-base p-4 h-[50px]"
@@ -183,10 +193,14 @@ const EditSongScreen = () => {
 
         {/* Buttons */}
         <View className="px-8 space-y-4 gap-y-4 mt-12">
-          <AnimatedButton color="green" label="💾 Save" onPress={handleSave} />
+          <AnimatedButton
+            color="green"
+            label={`💾 ${t('save')}`}
+            onPress={handleSave}
+          />
           <AnimatedButton
             color="cyan"
-            label="Cancel"
+            label={t('cancel')}
             onPress={() => router.back()}
           />
         </View>

@@ -1,15 +1,17 @@
-import LoadingScreen from "@/components/LoadingScreen";
-import QueueControls from "@/components/QueueControls";
-import TracksList from "@/components/TracksList";
-import { unknownTrackImageUri } from "@/constants/images";
-import formatDuration from "@/tools/formatDuration";
-import { usePlayerStore } from "@/tools/store/usePlayerStore";
-import { Album, Song } from "@/types/types";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialIcons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import LoadingScreen from '@/components/LoadingScreen';
+import QueueControls from '@/components/QueueControls';
+import TracksList from '@/components/TracksList';
+import { useT } from '@/constants/i18n';
+import { unknownTrackImageUri } from '@/constants/images';
+import { useColors } from '@/constants/tokens';
+import formatDuration from '@/tools/formatDuration';
+import { usePlayerStore } from '@/tools/store/usePlayerStore';
+import type { Album, Song } from '@/types/types';
 
 const AlbumScreen = () => {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -17,8 +19,10 @@ const AlbumScreen = () => {
   const [fetchedSongs, setFetchedSongs] = useState<Song[] | null>(null);
 
   const router = useRouter();
+  const t = useT();
+  const colors = useColors();
 
-  const albumName = name.replaceAll("+", " ");
+  const albumName = name.replaceAll('+', ' ');
 
   useEffect(() => {
     (async () => {
@@ -32,13 +36,13 @@ const AlbumScreen = () => {
   }
 
   const album: Album = {
-    id: "love-for-sale-deluxe",
-    name: fetchedSongs[0].title || "Song Name",
-    artistId: "tony-gaga",
-    artistName: fetchedSongs[0].artist || "Artist Name",
+    id: 'love-for-sale-deluxe',
+    name: fetchedSongs[0].title || 'Song Name',
+    artistId: 'tony-gaga',
+    artistName: fetchedSongs[0].artist || 'Artist Name',
     coverArt:
       fetchedSongs[0].coverArt ??
-      "file:///data/user/0/com.lori.app/files/albumArt/default.jpg",
+      'file:///data/user/0/com.lori.app/files/albumArt/default.jpg',
     songs: fetchedSongs,
     releaseDate: 1633046400000, // Dummy timestamp (Oct 1, 2021)
     duration: fetchedSongs.reduce((a, s) => a + (s.duration ?? 0), 0),
@@ -47,7 +51,10 @@ const AlbumScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-black" pointerEvents="box-none">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      pointerEvents="box-none"
+    >
       {/* Header */}
       <View
         className="flex-row items-center justify-between px-5 py-3 z-50"
@@ -56,7 +63,7 @@ const AlbumScreen = () => {
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={26} color="#ffffff" />
         </TouchableOpacity>
-        <Text className="text-white text-2xl font-bold">Album</Text>
+        <Text className="text-white text-2xl font-bold">{t('album')}</Text>
         <TouchableOpacity>
           <MaterialIcons name="share" size={26} color="#ffffff" />
         </TouchableOpacity>
@@ -95,7 +102,7 @@ const AlbumScreen = () => {
                     {album.artistName}
                   </Text>
                   <Text className="text-gray-500 text-sm text-center mt-1">
-                    {new Date(album.releaseDate).getFullYear()} •{" "}
+                    {new Date(album.releaseDate).getFullYear()} •{' '}
                     {formatDuration(album.duration)}
                   </Text>
                 </View>
@@ -119,23 +126,23 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   artworkImageContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     height: 300,
     marginTop: 50,
   },
   artworkImage: {
-    width: "85%",
-    height: "100%",
-    resizeMode: "cover",
+    width: '85%',
+    height: '100%',
+    resizeMode: 'cover',
     borderRadius: 12,
   },
   playlistNameText: {
-    color: "#fff",
+    color: '#fff',
     marginTop: 22,
     marginBottom: 6,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: '800',
   },
 });
